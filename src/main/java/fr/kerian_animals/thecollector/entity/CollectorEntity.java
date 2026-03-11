@@ -4,6 +4,7 @@ import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.goal.CollectorCollectItemGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorEscapeGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorScoutGoal;
+import fr.kerian_animals.thecollector.entity.goal.CollectorStealChestGoal;
 import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import fr.kerian_animals.thecollector.stash.CollectorStashManager;
 import net.minecraft.nbt.CompoundTag;
@@ -60,8 +61,9 @@ public class CollectorEntity extends PathfinderMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new CollectorEscapeGoal(this));
-        this.goalSelector.addGoal(2, new CollectorCollectItemGoal(this));
-        this.goalSelector.addGoal(3, new CollectorScoutGoal(this));
+        this.goalSelector.addGoal(2, new CollectorStealChestGoal(this));
+        this.goalSelector.addGoal(3, new CollectorCollectItemGoal(this));
+        this.goalSelector.addGoal(4, new CollectorScoutGoal(this));
         this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.95D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
@@ -140,15 +142,27 @@ public class CollectorEntity extends PathfinderMob {
             return false;
         }
 
+        if (!storeStolenStack(stack)) {
+            return false;
+        }
+
+        itemEntity.discard();
+        return true;
+    }
+
+    public boolean storeStolenStack(ItemStack stack) {
+        if (stack.isEmpty() || !hasInventoryCapacity()) {
+            return false;
+        }
+
         int slot = firstEmptySlot();
         if (slot < 0) {
             return false;
         }
 
-        this.stolenInventory.setItem(slot, stack);
+        this.stolenInventory.setItem(slot, stack.copy());
         this.stolenStacks++;
         this.playSound(SoundEvents.ITEM_PICKUP, 0.3F, 0.9F + this.random.nextFloat() * 0.2F);
-        itemEntity.discard();
 
         if (!hasInventoryCapacity()) {
             setEscaping("inventory_full");

@@ -33,6 +33,18 @@ public final class TheCollectorConfig {
             .comment("Radius used to scan for valuable item entities.")
             .defineInRange("itemSearchRadius", 20, 6, 64);
 
+    public static final ForgeConfigSpec.BooleanValue CHEST_THEFT_ENABLED = BUILDER
+            .comment("If true, collector can steal from nearby chests.")
+            .define("chestTheftEnabled", true);
+
+    public static final ForgeConfigSpec.IntValue CHEST_SEARCH_RADIUS = BUILDER
+            .comment("Radius used to scan for chest blocks.")
+            .defineInRange("chestSearchRadius", 12, 4, 32);
+
+    public static final ForgeConfigSpec.IntValue MAX_STEALS_PER_CHEST = BUILDER
+            .comment("How many stacks can be stolen from one chest before moving on.")
+            .defineInRange("maxStealsPerChest", 2, 1, 9);
+
     public static final ForgeConfigSpec.IntValue COLLECTOR_INVENTORY_SLOTS = BUILDER
             .comment("Internal collector inventory size.")
             .defineInRange("collectorInventorySlots", 9, 1, 54);
