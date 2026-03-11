@@ -3,8 +3,11 @@ package fr.kerian_animals.thecollector.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.stash.CollectorStash;
+import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -44,6 +47,9 @@ public final class CollectorCommandHandler {
                         .then(Commands.literal("latest").executes(CollectorCommandHandler::locateLatest))
                         .then(Commands.literal("nearest").executes(CollectorCommandHandler::locateNearest))
                         .then(Commands.literal("all").executes(CollectorCommandHandler::locateAll))
+                ).then(Commands.literal("entry")
+                        .then(Commands.literal("locate").executes(CollectorCommandHandler::locateEntry))
+                        .then(Commands.literal("create").executes(CollectorCommandHandler::createEntry))
                 );
     }
 
@@ -112,6 +118,48 @@ public final class CollectorCommandHandler {
                     .append(formatLocateLine("command.the_collector.locate.entry", stash)), false);
         }
         return limit;
+    }
+
+    private static int locateEntry(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        ServerLevel level = source.getServer().overworld();
+        CollectorSavedData data = CollectorSavedData.get(level);
+
+        Optional<CollectorEntry> entry;
+        ServerPlayer player = source.getPlayer();
+        if (player != null) {
+            entry = data.getNearestEntry(player.blockPosition());
+        } else {
+            entry = data.getLatestEntry();
+        }
+
+        if (entry.isEmpty()) {
+            source.sendFailure(Component.translatable("command.the_collector.entry.none"));
+            return 0;
+        }
+
+        CollectorEntry e = entry.get();
+        source.sendSuccess(() -> Component.translatable(
+                "command.the_collector.entry.locate",
+                e.pos().getX(), e.pos().getY(), e.pos().getZ(), "minecraft:overworld"
+        ).withStyle(ChatFormatting.AQUA), false);
+        return 1;
+    }
+
+    private static int createEntry(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        ServerLevel overworld = source.getServer().overworld();
+
+        BlockPos around = source.getPlayer() != null
+                ? source.getPlayer().blockPosition()
+                : overworld.getSharedSpawnPos();
+        CollectorEntry entry = CollectorEntryManager.ensureEntryExists(overworld, around);
+
+        source.sendSuccess(() -> Component.translatable(
+                "command.the_collector.entry.created",
+                entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
+        ).withStyle(ChatFormatting.GREEN), true);
+        return 1;
     }
 
     private static MutableComponent formatLocateLine(String key, CollectorStash stash) {

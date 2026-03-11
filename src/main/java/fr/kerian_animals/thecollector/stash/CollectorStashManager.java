@@ -2,13 +2,18 @@ package fr.kerian_animals.thecollector.stash;
 
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
+import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
+import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -33,22 +38,38 @@ public final class CollectorStashManager {
             stolenItems.add(level.random.nextBoolean() ? new ItemStack(Items.EMERALD, 2) : new ItemStack(Items.GOLD_INGOT, 3));
         }
 
-        BlockPos stashPos = findStashPos(level, collector.blockPosition());
-        if (stashPos == null) {
-            return;
-        }
+        ServerLevel realm = level.getServer().getLevel(ModDimensions.COLLECTOR_REALM);
+        BlockPos stashPos;
+        net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> stashDimension;
 
-        buildStashStructure(level, stashPos);
-        level.setBlock(stashPos, Blocks.CHEST.defaultBlockState(), 3);
-        if (level.getBlockEntity(stashPos) instanceof ChestBlockEntity chest) {
-            for (int i = 0; i < Math.min(27, stolenItems.size()); i++) {
-                chest.setItem(i, stolenItems.get(i));
+        if (realm != null) {
+            CollectorVaultManager.ensureVaultBuilt(realm);
+            stashPos = CollectorVaultManager.depositLoot(realm, stolenItems);
+            stashDimension = ModDimensions.COLLECTOR_REALM;
+
+            // Ensure at least one random discoverable entry exists in the Overworld.
+            CollectorEntryManager.ensureEntryExists(level.getServer().overworld(), collector.blockPosition());
+        } else {
+            BlockPos fallback = findStashPos(level, collector.blockPosition());
+            if (fallback == null) {
+                fallback = forceFallbackStashPos(level, collector.blockPosition());
             }
-            chest.setChanged();
+            buildStashStructure(level, fallback);
+            Container container = placeContainerWithFallback(level, fallback);
+            if (container != null) {
+                for (int i = 0; i < Math.min(container.getContainerSize(), stolenItems.size()); i++) {
+                    container.setItem(i, stolenItems.get(i));
+                }
+                if (container instanceof BlockEntity blockEntity) {
+                    blockEntity.setChanged();
+                }
+            }
+            stashPos = fallback;
+            stashDimension = level.dimension();
         }
 
         UUID stashId = UUID.randomUUID();
-        CollectorStash stash = new CollectorStash(stashId, level.dimension(), stashPos, stolenItems, level.getGameTime());
+        CollectorStash stash = new CollectorStash(stashId, stashDimension, stashPos, stolenItems, level.getGameTime());
         CollectorSavedData data = CollectorSavedData.get(level);
         data.addStash(stash);
 
@@ -61,7 +82,7 @@ public final class CollectorStashManager {
     }
 
     private static BlockPos findStashPos(ServerLevel level, BlockPos around) {
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 32; i++) {
             int x = around.getX() + level.random.nextInt(64) - 32;
             int z = around.getZ() + level.random.nextInt(64) - 32;
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
@@ -85,6 +106,43 @@ public final class CollectorStashManager {
             return false;
         }
         return level.getFluidState(pos).isEmpty();
+    }
+
+    private static BlockPos forceFallbackStashPos(ServerLevel level, BlockPos around) {
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, around.getX(), around.getZ());
+        BlockPos pos = new BlockPos(around.getX(), Math.max(level.getMinBuildHeight() + 1, y - 1), around.getZ());
+
+        if (!level.getWorldBorder().isWithinBounds(pos)) {
+            BlockPos center = BlockPos.containing(level.getWorldBorder().getCenterX(), pos.getY(), level.getWorldBorder().getCenterZ());
+            pos = center;
+        }
+
+        // Force a valid surface and empty placement space so stash creation never silently fails.
+        level.setBlock(pos.below(), Blocks.STONE.defaultBlockState(), 3);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        if (!level.getFluidState(pos).isEmpty()) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+        return pos;
+    }
+
+    private static Container placeContainerWithFallback(ServerLevel level, BlockPos pos) {
+        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+        if (level.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
+            return chest;
+        }
+
+        level.setBlock(pos, Blocks.BARREL.defaultBlockState(), 3);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Container container) {
+            return container;
+        }
+
+        // Last-resort safety: clear once and retry chest.
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+        blockEntity = level.getBlockEntity(pos);
+        return blockEntity instanceof Container container ? container : null;
     }
 
     private static void buildStashStructure(ServerLevel level, BlockPos center) {

@@ -4,10 +4,18 @@
   "item.the_collector.collector_compass.found": "Last stash: X=%s Y=%s Z=%s (%s)",
   "item.the_collector.collector_compass.hint": "Direction: %s | Distance: ~%s blocks",
   "item.the_collector.collector_compass.cross_dimension": "That stash is in another dimension.",
+  "item.the_collector.collector_compass.entry_hint": "Nearest entry: X=%s Y=%s Z=%s",
   "command.the_collector.locate.none": "No Collector stash was found.",
   "command.the_collector.locate.latest": "Latest stash: X=%s Y=%s Z=%s (%s)",
   "command.the_collector.locate.nearest": "Nearest stash: X=%s Y=%s Z=%s (%s)",
   "command.the_collector.locate.entry": "Stash: X=%s Y=%s Z=%s (%s)",
   "command.the_collector.locate.all_header": "Known stashes: %s (showing %s most recent)",
+  "command.the_collector.entry.none": "No entry to the Collector realm exists yet.",
+  "command.the_collector.entry.locate": "Entry: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.entry.created": "New entry generated: X=%s Y=%s Z=%s",
+  "dimension.the_collector.entered": "You enter the Collector realm...",
+  "dimension.the_collector.left": "You return to the Overworld.",
+  "dimension.the_collector.no_entry": "No valid exit entry was found.",
+  "dimension.the_collector.not_ready": "Collector dimension is not loaded.",
   "entity.the_collector.collector": "The Collector"
 }

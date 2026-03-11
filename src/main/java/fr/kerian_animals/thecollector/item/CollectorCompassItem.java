@@ -2,6 +2,8 @@ package fr.kerian_animals.thecollector.item;
 
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.stash.CollectorStash;
+import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
+import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.ChatFormatting;
@@ -34,8 +36,20 @@ public class CollectorCompassItem extends CompassItem {
                 .or(data::getLatestStash);
 
         if (stashOptional.isEmpty()) {
-            serverPlayer.sendSystemMessage(Component.translatable("item.the_collector.collector_compass.no_stash")
-                    .withStyle(ChatFormatting.GRAY));
+            Optional<fr.kerian_animals.thecollector.stash.CollectorEntry> nearestEntry =
+                    CollectorEntryManager.getNearestEntryFor(serverPlayer.serverLevel(), serverPlayer.blockPosition());
+            if (nearestEntry.isPresent()) {
+                serverPlayer.sendSystemMessage(Component.translatable(
+                                "item.the_collector.collector_compass.entry_hint",
+                                nearestEntry.get().pos().getX(),
+                                nearestEntry.get().pos().getY(),
+                                nearestEntry.get().pos().getZ())
+                        .withStyle(ChatFormatting.DARK_AQUA));
+                spawnBreadcrumbTrail(serverPlayer, nearestEntry.get().pos());
+            } else {
+                serverPlayer.sendSystemMessage(Component.translatable("item.the_collector.collector_compass.no_stash")
+                        .withStyle(ChatFormatting.GRAY));
+            }
             return InteractionResultHolder.consume(stack);
         }
 
@@ -69,6 +83,13 @@ public class CollectorCompassItem extends CompassItem {
             serverPlayer.sendSystemMessage(Component.translatable(
                     "item.the_collector.collector_compass.cross_dimension"
             ).withStyle(ChatFormatting.DARK_AQUA));
+            if (stash.dimension() == ModDimensions.COLLECTOR_REALM) {
+                CollectorEntryManager.getNearestEntryFor(serverPlayer.serverLevel(), serverPlayer.blockPosition())
+                        .ifPresent(entry -> serverPlayer.sendSystemMessage(Component.translatable(
+                                "item.the_collector.collector_compass.entry_hint",
+                                entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
+                        ).withStyle(ChatFormatting.AQUA)));
+            }
         }
 
         serverPlayer.getCooldowns().addCooldown(this, 20);

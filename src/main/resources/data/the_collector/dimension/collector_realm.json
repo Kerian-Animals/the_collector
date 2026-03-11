@@ -1,0 +1,25 @@
+{
+  "type": "the_collector:collector_realm_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [
+        {
+          "block": "minecraft:bedrock",
+          "height": 1
+        },
+        {
+          "block": "minecraft:deepslate",
+          "height": 4
+        },
+        {
+          "block": "minecraft:stone",
+          "height": 40
+        }
+      ],
+      "biome": "minecraft:plains",
+      "lakes": false,
+      "features": false
+    }
+  }
+}

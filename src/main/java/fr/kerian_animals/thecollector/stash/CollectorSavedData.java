@@ -1,6 +1,7 @@
 package fr.kerian_animals.thecollector.stash;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,6 +20,7 @@ public class CollectorSavedData extends SavedData {
 
     private final Map<UUID, CollectorStash> stashes = new HashMap<>();
     private final Map<UUID, UUID> playerLastStash = new HashMap<>();
+    private final Map<UUID, CollectorEntry> entries = new HashMap<>();
 
     public static CollectorSavedData get(ServerLevel level) {
         ServerLevel overworld = level.getServer().overworld();
@@ -42,6 +44,12 @@ public class CollectorSavedData extends SavedData {
             CompoundTag mapEntry = playerMap.getCompound(i);
             data.playerLastStash.put(mapEntry.getUUID("Player"), mapEntry.getUUID("Stash"));
         }
+
+        ListTag entryList = tag.getList("Entries", Tag.TAG_COMPOUND);
+        for (int i = 0; i < entryList.size(); i++) {
+            CollectorEntry entry = CollectorEntry.load(entryList.getCompound(i));
+            data.entries.put(entry.id(), entry);
+        }
         return data;
     }
 
@@ -61,6 +69,12 @@ public class CollectorSavedData extends SavedData {
             playerMap.add(mapEntry);
         }
         tag.put("PlayerMap", playerMap);
+
+        ListTag entriesTag = new ListTag();
+        for (CollectorEntry entry : this.entries.values()) {
+            entriesTag.add(entry.save());
+        }
+        tag.put("Entries", entriesTag);
         return tag;
     }
 
@@ -89,6 +103,24 @@ public class CollectorSavedData extends SavedData {
     public Optional<CollectorStash> getLatestStash() {
         return this.stashes.values().stream()
                 .max(Comparator.comparingLong(CollectorStash::createdTick));
+    }
+
+    public void addEntry(CollectorEntry entry) {
+        this.entries.put(entry.id(), entry);
+        setDirty();
+    }
+
+    public Collection<CollectorEntry> getAllEntries() {
+        return this.entries.values();
+    }
+
+    public Optional<CollectorEntry> getLatestEntry() {
+        return this.entries.values().stream().max(Comparator.comparingLong(CollectorEntry::createdTick));
+    }
+
+    public Optional<CollectorEntry> getNearestEntry(BlockPos from) {
+        return this.entries.values().stream()
+                .min(Comparator.comparingDouble(entry -> entry.pos().distSqr(from)));
     }
 }
 
