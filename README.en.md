@@ -55,8 +55,6 @@ Main settings include:
 ## Author
 
 - Kérian
-- Kérian_Animals
-- kerian_animals
 
 ## License
 
