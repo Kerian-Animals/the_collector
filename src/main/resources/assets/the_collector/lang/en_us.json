@@ -2,5 +2,12 @@
   "item.the_collector.collector_compass": "Collector Compass",
   "item.the_collector.collector_compass.no_stash": "No collector stash is known yet.",
   "item.the_collector.collector_compass.found": "Last stash: X=%s Y=%s Z=%s (%s)",
+  "item.the_collector.collector_compass.hint": "Direction: %s | Distance: ~%s blocks",
+  "item.the_collector.collector_compass.cross_dimension": "That stash is in another dimension.",
+  "command.the_collector.locate.none": "No Collector stash was found.",
+  "command.the_collector.locate.latest": "Latest stash: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.nearest": "Nearest stash: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.entry": "Stash: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.all_header": "Known stashes: %s (showing %s most recent)",
   "entity.the_collector.collector": "The Collector"
 }

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -83,6 +84,11 @@ public class CollectorSavedData extends SavedData {
 
     public Collection<CollectorStash> getAllStashes() {
         return this.stashes.values();
+    }
+
+    public Optional<CollectorStash> getLatestStash() {
+        return this.stashes.values().stream()
+                .max(Comparator.comparingLong(CollectorStash::createdTick));
     }
 }
 

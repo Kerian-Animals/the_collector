@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -37,6 +38,7 @@ public final class CollectorStashManager {
             return;
         }
 
+        buildStashStructure(level, stashPos);
         level.setBlock(stashPos, Blocks.CHEST.defaultBlockState(), 3);
         if (level.getBlockEntity(stashPos) instanceof ChestBlockEntity chest) {
             for (int i = 0; i < Math.min(27, stolenItems.size()); i++) {
@@ -83,6 +85,51 @@ public final class CollectorStashManager {
             return false;
         }
         return level.getFluidState(pos).isEmpty();
+    }
+
+    private static void buildStashStructure(ServerLevel level, BlockPos center) {
+        Block[] floorPalette = new Block[]{
+                Blocks.COBBLED_DEEPSLATE, Blocks.MOSSY_COBBLESTONE, Blocks.TUFF_BRICKS
+        };
+
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                int manhattan = Math.abs(dx) + Math.abs(dz);
+                if (manhattan > 4 && level.random.nextFloat() > 0.25F) {
+                    continue;
+                }
+
+                BlockPos floorPos = center.offset(dx, -1, dz);
+                BlockPos topPos = center.offset(dx, 0, dz);
+                Block floorBlock = floorPalette[level.random.nextInt(floorPalette.length)];
+                placeBlockIfReplaceable(level, floorPos, floorBlock);
+
+                if (manhattan >= 3 && level.random.nextFloat() < 0.65F) {
+                    placeBlockIfReplaceable(level, topPos, Blocks.COARSE_DIRT);
+                }
+            }
+        }
+
+        placeBlockIfReplaceable(level, center.offset(2, 0, 0), Blocks.DEEPSLATE_TILE_WALL);
+        placeBlockIfReplaceable(level, center.offset(-2, 0, 0), Blocks.DEEPSLATE_TILE_WALL);
+        placeBlockIfReplaceable(level, center.offset(0, 0, 2), Blocks.DEEPSLATE_TILE_WALL);
+        placeBlockIfReplaceable(level, center.offset(0, 0, -2), Blocks.DEEPSLATE_TILE_WALL);
+
+        placeBlockIfReplaceable(level, center.offset(2, 1, 0), Blocks.SOUL_LANTERN);
+        placeBlockIfReplaceable(level, center.offset(-2, 1, 0), Blocks.SOUL_LANTERN);
+
+        if (level.random.nextBoolean()) {
+            placeBlockIfReplaceable(level, center.offset(1, 0, 2), Blocks.SKELETON_SKULL);
+        }
+        if (level.random.nextBoolean()) {
+            placeBlockIfReplaceable(level, center.offset(-1, 0, -2), Blocks.CANDLE);
+        }
+    }
+
+    private static void placeBlockIfReplaceable(ServerLevel level, BlockPos pos, Block block) {
+        if (level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir()) {
+            level.setBlock(pos, block.defaultBlockState(), 3);
+        }
     }
 }
 

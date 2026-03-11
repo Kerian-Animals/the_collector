@@ -2,5 +2,12 @@
   "item.the_collector.collector_compass": "Boussole du Collectionneur",
   "item.the_collector.collector_compass.no_stash": "Aucune cache du Collectionneur n'est connue pour le moment.",
   "item.the_collector.collector_compass.found": "Dernière cache: X=%s Y=%s Z=%s (%s)",
+  "item.the_collector.collector_compass.hint": "Direction: %s | Distance: ~%s blocs",
+  "item.the_collector.collector_compass.cross_dimension": "La cache se trouve dans une autre dimension.",
+  "command.the_collector.locate.none": "Aucune cache du Collectionneur n'a été trouvée.",
+  "command.the_collector.locate.latest": "Dernière cache: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.nearest": "Cache la plus proche: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.entry": "Cache: X=%s Y=%s Z=%s (%s)",
+  "command.the_collector.locate.all_header": "Caches connues: %s (affichage des %s plus récentes)",
   "entity.the_collector.collector": "Le Collectionneur"
 }
