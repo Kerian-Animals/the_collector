@@ -1,8 +1,8 @@
-package fr.harmonia.thecollector.spawn;
+package fr.kerian_animals.thecollector.spawn;
 
-import fr.harmonia.thecollector.config.TheCollectorConfig;
-import fr.harmonia.thecollector.entity.CollectorEntity;
-import fr.harmonia.thecollector.registry.ModEntities;
+import fr.kerian_animals.thecollector.config.TheCollectorConfig;
+import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -91,3 +91,4 @@ public class CollectorSpawnHandler {
         return null;
     }
 }
+

@@ -1,9 +1,9 @@
-package fr.harmonia.thecollector.entity.goal;
+package fr.kerian_animals.thecollector.entity.goal;
 
-import fr.harmonia.thecollector.config.TheCollectorConfig;
-import fr.harmonia.thecollector.entity.CollectorEntity;
-import fr.harmonia.thecollector.entity.state.CollectorState;
-import fr.harmonia.thecollector.loot.ItemValueHelper;
+import fr.kerian_animals.thecollector.config.TheCollectorConfig;
+import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.entity.state.CollectorState;
+import fr.kerian_animals.thecollector.loot.ItemValueHelper;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 
@@ -72,3 +72,4 @@ public class CollectorScoutGoal extends Goal {
         return (value * item.getItem().getCount()) / Math.max(1.0D, distance);
     }
 }
+

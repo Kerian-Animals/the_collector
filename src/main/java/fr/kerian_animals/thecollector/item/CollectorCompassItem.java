@@ -1,7 +1,7 @@
-package fr.harmonia.thecollector.item;
+package fr.kerian_animals.thecollector.item;
 
-import fr.harmonia.thecollector.stash.CollectorSavedData;
-import fr.harmonia.thecollector.stash.CollectorStash;
+import fr.kerian_animals.thecollector.stash.CollectorSavedData;
+import fr.kerian_animals.thecollector.stash.CollectorStash;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -47,3 +46,4 @@ public class CollectorCompassItem extends Item {
         return InteractionResultHolder.consume(stack);
     }
 }
+

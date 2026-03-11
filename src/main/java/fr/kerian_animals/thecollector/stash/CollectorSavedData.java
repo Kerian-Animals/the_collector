@@ -1,4 +1,4 @@
-package fr.harmonia.thecollector.stash;
+package fr.kerian_animals.thecollector.stash;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +22,7 @@ public class CollectorSavedData extends SavedData {
     public static CollectorSavedData get(ServerLevel level) {
         ServerLevel overworld = level.getServer().overworld();
         return overworld.getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(CollectorSavedData::new, CollectorSavedData::load),
+                new SavedData.Factory<>(CollectorSavedData::new, CollectorSavedData::load, null),
                 DATA_NAME
         );
     }
@@ -85,3 +85,4 @@ public class CollectorSavedData extends SavedData {
         return this.stashes.values();
     }
 }
+

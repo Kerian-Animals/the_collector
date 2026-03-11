@@ -1,4 +1,4 @@
-package fr.harmonia.thecollector.loot;
+package fr.kerian_animals.thecollector.loot;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
@@ -14,21 +14,25 @@ public final class ItemValueHelper {
             return 0;
         }
 
-        int base = switch (stack.getItem()) {
-            case net.minecraft.world.item.Item item when item == Items.NETHERITE_INGOT -> 100;
-            case net.minecraft.world.item.Item item when item == Items.DIAMOND -> 80;
-            case net.minecraft.world.item.Item item when item == Items.EMERALD -> 70;
-            case net.minecraft.world.item.Item item when item == Items.GOLD_INGOT -> 50;
-            case net.minecraft.world.item.Item item when item == Items.IRON_INGOT -> 30;
-            default -> 0;
-        };
+        int base = 0;
+        if (stack.is(Items.NETHERITE_INGOT)) {
+            base = 100;
+        } else if (stack.is(Items.DIAMOND)) {
+            base = 80;
+        } else if (stack.is(Items.EMERALD)) {
+            base = 70;
+        } else if (stack.is(Items.GOLD_INGOT)) {
+            base = 50;
+        } else if (stack.is(Items.IRON_INGOT)) {
+            base = 30;
+        }
 
         if (base == 0) {
             if (stack.is(ItemTags.COALS)) {
                 base = 10;
             } else if (stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)) {
                 base = 2;
-            } else if (stack.is(ItemTags.COPPER_ORES)) {
+            } else if (stack.is(Items.RAW_COPPER)) {
                 base = 20;
             }
         }
@@ -50,3 +54,4 @@ public final class ItemValueHelper {
         return score(stack) >= 15;
     }
 }
+

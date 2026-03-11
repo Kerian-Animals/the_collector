@@ -1,0 +1,6 @@
+{
+  "item.the_collector.collector_compass": "Boussole du Collectionneur",
+  "item.the_collector.collector_compass.no_stash": "Aucune cache du Collectionneur n'est connue pour le moment.",
+  "item.the_collector.collector_compass.found": "Dernière cache: X=%s Y=%s Z=%s (%s)",
+  "entity.the_collector.collector": "Le Collectionneur"
+}

@@ -1,11 +1,11 @@
-package fr.harmonia.thecollector.entity;
+package fr.kerian_animals.thecollector.entity;
 
-import fr.harmonia.thecollector.config.TheCollectorConfig;
-import fr.harmonia.thecollector.entity.goal.CollectorCollectItemGoal;
-import fr.harmonia.thecollector.entity.goal.CollectorEscapeGoal;
-import fr.harmonia.thecollector.entity.goal.CollectorScoutGoal;
-import fr.harmonia.thecollector.entity.state.CollectorState;
-import fr.harmonia.thecollector.stash.CollectorStashManager;
+import fr.kerian_animals.thecollector.config.TheCollectorConfig;
+import fr.kerian_animals.thecollector.entity.goal.CollectorCollectItemGoal;
+import fr.kerian_animals.thecollector.entity.goal.CollectorEscapeGoal;
+import fr.kerian_animals.thecollector.entity.goal.CollectorScoutGoal;
+import fr.kerian_animals.thecollector.entity.state.CollectorState;
+import fr.kerian_animals.thecollector.stash.CollectorStashManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -45,7 +44,7 @@ public class CollectorEntity extends PathfinderMob {
     private int ageTicks = 0;
     private int escapeTicks = 0;
 
-    public CollectorEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
+    public CollectorEntity(EntityType<? extends CollectorEntity> entityType, Level level) {
         super(entityType, level);
         this.xpReward = 5;
     }
@@ -226,3 +225,4 @@ public class CollectorEntity extends PathfinderMob {
         }
     }
 }
+

@@ -1,7 +1,7 @@
-package fr.harmonia.thecollector.entity.goal;
+package fr.kerian_animals.thecollector.entity.goal;
 
-import fr.harmonia.thecollector.entity.CollectorEntity;
-import fr.harmonia.thecollector.entity.state.CollectorState;
+import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
 
@@ -58,3 +58,4 @@ public class CollectorCollectItemGoal extends Goal {
         }
     }
 }
+

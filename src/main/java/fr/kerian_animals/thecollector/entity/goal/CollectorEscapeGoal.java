@@ -1,8 +1,8 @@
-package fr.harmonia.thecollector.entity.goal;
+package fr.kerian_animals.thecollector.entity.goal;
 
-import fr.harmonia.thecollector.config.TheCollectorConfig;
-import fr.harmonia.thecollector.entity.CollectorEntity;
-import fr.harmonia.thecollector.entity.state.CollectorState;
+import fr.kerian_animals.thecollector.config.TheCollectorConfig;
+import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -47,3 +47,4 @@ public class CollectorEscapeGoal extends Goal {
         collector.getNavigation().moveTo(target.x, target.y, target.z, 1.55D);
     }
 }
+

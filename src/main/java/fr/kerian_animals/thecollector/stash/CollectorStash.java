@@ -1,4 +1,4 @@
-package fr.harmonia.thecollector.stash;
+package fr.kerian_animals.thecollector.stash;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -52,3 +52,4 @@ public record CollectorStash(
         return new CollectorStash(id, dimension, pos, contents, createdTick);
     }
 }
+

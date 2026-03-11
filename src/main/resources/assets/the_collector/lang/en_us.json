@@ -1,0 +1,6 @@
+{
+  "item.the_collector.collector_compass": "Collector Compass",
+  "item.the_collector.collector_compass.no_stash": "No collector stash is known yet.",
+  "item.the_collector.collector_compass.found": "Last stash: X=%s Y=%s Z=%s (%s)",
+  "entity.the_collector.collector": "The Collector"
+}
