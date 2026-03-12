@@ -5,17 +5,25 @@ import fr.kerian_animals.thecollector.entity.CollectorEntity;
 import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import fr.kerian_animals.thecollector.loot.ItemValueHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class CollectorStealChestGoal extends Goal {
     private final CollectorEntity collector;
     private @Nullable BlockPos targetChestPos;
-    private int stealsFromCurrentChest = 0;
     private int scanCooldown = 0;
     private int stealCooldown = 0;
 
@@ -40,7 +48,6 @@ public class CollectorStealChestGoal extends Goal {
         }
 
         targetChestPos = findBestChest();
-        stealsFromCurrentChest = 0;
         scanCooldown = 20;
         return targetChestPos != null;
     }
@@ -80,39 +87,14 @@ public class CollectorStealChestGoal extends Goal {
             return;
         }
 
-        int bestSlot = findBestSlot(chest);
-        if (bestSlot < 0) {
-            targetChestPos = null;
-            return;
-        }
-
-        ItemStack inChest = chest.getItem(bestSlot);
-        if (inChest.isEmpty()) {
-            return;
-        }
-
-        ItemStack stolen = chest.removeItem(bestSlot, inChest.getCount());
-        if (stolen.isEmpty()) {
-            return;
-        }
-        if (!collector.storeStolenStack(stolen)) {
-            chest.setItem(bestSlot, stolen);
-            collector.setEscaping("inventory_limit");
-            return;
-        }
-
-        chest.setChanged();
-        stealsFromCurrentChest++;
-        if (stealsFromCurrentChest >= TheCollectorConfig.MAX_STEALS_PER_CHEST.get()) {
-            targetChestPos = null;
-            stealsFromCurrentChest = 0;
-        }
+        stealWholeChest(chest, targetChestPos);
+        targetChestPos = null;
+        collector.setEscaping("chest_raided");
     }
 
     @Override
     public void stop() {
         targetChestPos = null;
-        stealsFromCurrentChest = 0;
         if (collector.getCollectorState() == CollectorState.COLLECTING) {
             collector.setCollectorState(CollectorState.SCOUTING);
         }
@@ -156,7 +138,7 @@ public class CollectorStealChestGoal extends Goal {
         if (!(blockEntity instanceof ChestBlockEntity chest)) {
             return false;
         }
-        return findBestSlot(chest) >= 0;
+        return hasInterestingLoot(chest);
     }
 
     private static int findBestSlot(Container container) {
@@ -172,4 +154,64 @@ public class CollectorStealChestGoal extends Goal {
         }
         return bestValue > 0 ? bestSlot : -1;
     }
+
+    private static boolean hasInterestingLoot(Container container) {
+        return findBestSlot(container) >= 0;
+    }
+
+    private void stealWholeChest(ChestBlockEntity chest, BlockPos pos) {
+        List<ItemStack> toSteal = collectStacksForTheft(chest, pos);
+
+        // The Collector steals the physical chest block too.
+        toSteal.add(new ItemStack(Items.CHEST));
+
+        for (ItemStack stack : toSteal) {
+            collector.storeStolenStackGuaranteed(stack);
+        }
+
+        chest.clearContent();
+        chest.setChanged();
+        collector.level().removeBlock(pos, false);
+    }
+
+    private List<ItemStack> collectStacksForTheft(ChestBlockEntity chest, BlockPos pos) {
+        List<Integer> nonEmptySlots = new ArrayList<>();
+        for (int i = 0; i < chest.getContainerSize(); i++) {
+            if (!chest.getItem(i).isEmpty()) {
+                nonEmptySlots.add(i);
+            }
+        }
+
+        BlockState state = collector.level().getBlockState(pos);
+        ChestType chestType = state.hasProperty(ChestBlock.TYPE) ? state.getValue(ChestBlock.TYPE) : ChestType.SINGLE;
+        int targetCount = chestType == ChestType.SINGLE
+                ? nonEmptySlots.size()
+                : Math.max(1, (nonEmptySlots.size() + 1) / 2);
+
+        RandomSource random = collector.getRandom();
+        nonEmptySlots.sort(Comparator.comparingInt((Integer i) -> ItemValueHelper.score(chest.getItem(i))).reversed());
+
+        // Keep valuable stacks prioritized, then randomize a bit for variety.
+        if (chestType != ChestType.SINGLE && nonEmptySlots.size() > 2) {
+            List<Integer> tail = new ArrayList<>(nonEmptySlots.subList(2, nonEmptySlots.size()));
+            java.util.Collections.shuffle(tail, new java.util.Random(random.nextLong()));
+            nonEmptySlots = new ArrayList<>(nonEmptySlots.subList(0, 2));
+            nonEmptySlots.addAll(tail);
+        }
+
+        List<ItemStack> stolen = new ArrayList<>();
+        int count = 0;
+        for (int slot : nonEmptySlots) {
+            if (count >= targetCount) {
+                break;
+            }
+            ItemStack stack = chest.removeItem(slot, chest.getItem(slot).getCount());
+            if (!stack.isEmpty()) {
+                stolen.add(stack);
+                count++;
+            }
+        }
+        return stolen;
+    }
+
 }

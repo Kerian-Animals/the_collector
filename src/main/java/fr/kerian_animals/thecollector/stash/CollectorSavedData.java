@@ -122,5 +122,22 @@ public class CollectorSavedData extends SavedData {
         return this.entries.values().stream()
                 .min(Comparator.comparingDouble(entry -> entry.pos().distSqr(from)));
     }
+
+    public Optional<CollectorEntry> getEntryAt(BlockPos pos, int maxDistance) {
+        int max = Math.max(0, maxDistance);
+        return this.entries.values().stream()
+                .filter(entry -> entry.pos().distManhattan(pos) <= max)
+                .min(Comparator.comparingInt(entry -> entry.pos().distManhattan(pos)));
+    }
+
+    public boolean setEntryActivated(UUID entryId, boolean activated) {
+        CollectorEntry current = this.entries.get(entryId);
+        if (current == null || current.activated() == activated) {
+            return false;
+        }
+        this.entries.put(entryId, current.withActivated(activated));
+        setDirty();
+        return true;
+    }
 }
 

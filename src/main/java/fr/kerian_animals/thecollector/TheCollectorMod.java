@@ -29,6 +29,11 @@ public final class TheCollectorMod {
     private void onBuildTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.COLLECTOR_COMPASS.get());
+            event.accept(ModItems.COLLECTOR_CATALYST.get());
+        } else if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.NETHER_RELIC_FRAGMENT.get());
+            event.accept(ModItems.CAVERN_RELIC_FRAGMENT.get());
+            event.accept(ModItems.ECHO_RELIC_FRAGMENT.get());
         }
     }
 }

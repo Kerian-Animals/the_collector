@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:shaped",
+  "pattern": [
+    "NEN",
+    "ECE",
+    "NEN"
+  ],
+  "key": {
+    "N": { "item": "the_collector:nether_relic_fragment" },
+    "C": { "item": "the_collector:cavern_relic_fragment" },
+    "E": { "item": "the_collector:echo_relic_fragment" }
+  },
+  "result": {
+    "id": "the_collector:collector_catalyst",
+    "count": 1
+  }
+}

@@ -35,15 +35,21 @@ import java.util.List;
 public class CollectorEntity extends PathfinderMob {
     private static final String TAG_STATE = "CollectorState";
     private static final String TAG_STOLEN_ITEMS = "StolenItems";
+    private static final String TAG_OVERFLOW_ITEMS = "OverflowItems";
     private static final String TAG_STOLEN_STACKS = "StolenStacks";
     private static final String TAG_AGE = "AgeTicks";
+    private static final String TAG_DEBUG_FIXED = "DebugFixed";
+    private static final String TAG_DEBUG_NO_DESPAWN = "DebugNoDespawn";
 
     private CollectorState state = CollectorState.IDLE;
     private @Nullable ItemEntity currentTarget;
     private final SimpleContainer stolenInventory = new SimpleContainer(54);
+    private final List<ItemStack> overflowStolenItems = new ArrayList<>();
     private int stolenStacks = 0;
     private int ageTicks = 0;
     private int escapeTicks = 0;
+    private boolean debugFixed = false;
+    private boolean debugNoDespawn = false;
 
     public CollectorEntity(EntityType<? extends CollectorEntity> entityType, Level level) {
         super(entityType, level);
@@ -73,6 +79,14 @@ public class CollectorEntity extends PathfinderMob {
     public void tick() {
         super.tick();
         if (this.level().isClientSide || !TheCollectorConfig.MOD_ENABLED.get()) {
+            return;
+        }
+
+        if (this.debugNoDespawn && this.state == CollectorState.DESPAWNING) {
+            this.state = CollectorState.IDLE;
+        }
+
+        if (this.debugNoDespawn) {
             return;
         }
 
@@ -107,6 +121,7 @@ public class CollectorEntity extends PathfinderMob {
         boolean hurt = super.hurt(source, amount);
         if (hurt && !this.level().isClientSide) {
             setEscaping("attacked");
+            randomShortTeleport();
         }
         return hurt;
     }
@@ -170,6 +185,27 @@ public class CollectorEntity extends PathfinderMob {
         return true;
     }
 
+    public void storeStolenStackGuaranteed(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        if (!storeStolenStack(stack)) {
+            this.overflowStolenItems.add(stack.copy());
+        }
+    }
+
+    private void randomShortTeleport() {
+        for (int i = 0; i < 8; i++) {
+            double x = this.getX() + (this.random.nextDouble() - 0.5D) * 16.0D;
+            double y = this.getY() + this.random.nextInt(5) - 2;
+            double z = this.getZ() + (this.random.nextDouble() - 0.5D) * 16.0D;
+            if (this.randomTeleport(x, y, z, true)) {
+                this.playSound(SoundEvents.ENDERMAN_TELEPORT, 0.8F, 0.9F + this.random.nextFloat() * 0.2F);
+                return;
+            }
+        }
+    }
+
     public List<ItemStack> getStolenItems() {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < this.stolenInventory.getContainerSize(); i++) {
@@ -178,7 +214,21 @@ public class CollectorEntity extends PathfinderMob {
                 stacks.add(stack.copy());
             }
         }
+        for (ItemStack stack : this.overflowStolenItems) {
+            if (!stack.isEmpty()) {
+                stacks.add(stack.copy());
+            }
+        }
         return stacks;
+    }
+
+    public void setDebugFixed(boolean debugFixed) {
+        this.debugFixed = debugFixed;
+        this.setNoAi(debugFixed);
+    }
+
+    public void setDebugNoDespawn(boolean debugNoDespawn) {
+        this.debugNoDespawn = debugNoDespawn;
     }
 
     private int firstEmptySlot() {
@@ -207,6 +257,8 @@ public class CollectorEntity extends PathfinderMob {
         tag.putString(TAG_STATE, this.state.name());
         tag.putInt(TAG_STOLEN_STACKS, this.stolenStacks);
         tag.putInt(TAG_AGE, this.ageTicks);
+        tag.putBoolean(TAG_DEBUG_FIXED, this.debugFixed);
+        tag.putBoolean(TAG_DEBUG_NO_DESPAWN, this.debugNoDespawn);
 
         ListTag listTag = new ListTag();
         int maxSlots = Math.min(TheCollectorConfig.COLLECTOR_INVENTORY_SLOTS.get(), this.stolenInventory.getContainerSize());
@@ -217,6 +269,14 @@ public class CollectorEntity extends PathfinderMob {
             }
         }
         tag.put(TAG_STOLEN_ITEMS, listTag);
+
+        ListTag overflowTag = new ListTag();
+        for (ItemStack stack : this.overflowStolenItems) {
+            if (!stack.isEmpty()) {
+                overflowTag.add(stack.save(this.registryAccess()));
+            }
+        }
+        tag.put(TAG_OVERFLOW_ITEMS, overflowTag);
     }
 
     @Override
@@ -227,15 +287,24 @@ public class CollectorEntity extends PathfinderMob {
         }
         this.stolenStacks = tag.getInt(TAG_STOLEN_STACKS);
         this.ageTicks = tag.getInt(TAG_AGE);
+        this.debugFixed = tag.getBoolean(TAG_DEBUG_FIXED);
+        this.debugNoDespawn = tag.getBoolean(TAG_DEBUG_NO_DESPAWN);
+        this.setNoAi(this.debugFixed);
 
         for (int i = 0; i < this.stolenInventory.getContainerSize(); i++) {
             this.stolenInventory.setItem(i, ItemStack.EMPTY);
         }
+        this.overflowStolenItems.clear();
 
         ListTag listTag = tag.getList(TAG_STOLEN_ITEMS, Tag.TAG_COMPOUND);
         int maxSlots = Math.min(listTag.size(), this.stolenInventory.getContainerSize());
         for (int i = 0; i < maxSlots; i++) {
             this.stolenInventory.setItem(i, ItemStack.parse(this.registryAccess(), listTag.getCompound(i)).orElse(ItemStack.EMPTY));
+        }
+
+        ListTag overflowTag = tag.getList(TAG_OVERFLOW_ITEMS, Tag.TAG_COMPOUND);
+        for (int i = 0; i < overflowTag.size(); i++) {
+            ItemStack.parse(this.registryAccess(), overflowTag.getCompound(i)).ifPresent(this.overflowStolenItems::add);
         }
     }
 }

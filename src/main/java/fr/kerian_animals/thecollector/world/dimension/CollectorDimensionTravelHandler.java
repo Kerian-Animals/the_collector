@@ -56,6 +56,10 @@ public final class CollectorDimensionTravelHandler {
         if (!player.serverLevel().getBlockState(nearest.get().pos()).is(Blocks.LODESTONE)) {
             return;
         }
+        if (!nearest.get().activated()) {
+            player.sendSystemMessage(Component.translatable("dimension.the_collector.entry_inactive"));
+            return;
+        }
 
         ServerLevel realm = player.server.getLevel(ModDimensions.COLLECTOR_REALM);
         if (realm == null) {

@@ -18,7 +18,7 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<CollectorEntity>> COLLECTOR = ENTITY_TYPES.register(
             "collector",
             () -> EntityType.Builder.of(CollectorEntity::new, MobCategory.MONSTER)
-                    .sized(0.6F, 1.95F)
+                    .sized(0.6F, 2.9F)
                     .build("collector")
     );
 

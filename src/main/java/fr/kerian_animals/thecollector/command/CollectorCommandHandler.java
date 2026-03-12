@@ -3,6 +3,8 @@ package fr.kerian_animals.thecollector.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.stash.CollectorStash;
@@ -49,8 +51,14 @@ public final class CollectorCommandHandler {
                         .then(Commands.literal("all").executes(CollectorCommandHandler::locateAll))
                 ).then(Commands.literal("entry")
                         .then(Commands.literal("locate").executes(CollectorCommandHandler::locateEntry))
-                        .then(Commands.literal("create").executes(CollectorCommandHandler::createEntry))
-                );
+                        .then(Commands.literal("create")
+                                .requires(source -> source.hasPermission(2))
+                                .executes(CollectorCommandHandler::createEntry))
+               );
+//                .then(Commands.literal("spawn_static")
+//                        .requires(source -> source.hasPermission(2))
+//                        .executes(CollectorCommandHandler::spawnStaticCollector)
+//                );
     }
 
     private static int locateLatest(CommandContext<CommandSourceStack> context) {
@@ -141,7 +149,10 @@ public final class CollectorCommandHandler {
         CollectorEntry e = entry.get();
         source.sendSuccess(() -> Component.translatable(
                 "command.the_collector.entry.locate",
-                e.pos().getX(), e.pos().getY(), e.pos().getZ(), "minecraft:overworld"
+                e.pos().getX(), e.pos().getY(), e.pos().getZ(), "minecraft:overworld",
+                Component.translatable(e.activated()
+                        ? "command.the_collector.entry.state.active"
+                        : "command.the_collector.entry.state.inactive")
         ).withStyle(ChatFormatting.AQUA), false);
         return 1;
     }
@@ -158,6 +169,34 @@ public final class CollectorCommandHandler {
         source.sendSuccess(() -> Component.translatable(
                 "command.the_collector.entry.created",
                 entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
+        ).withStyle(ChatFormatting.GREEN), true);
+        return 1;
+    }
+
+    private static int spawnStaticCollector(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            source.sendFailure(Component.translatable("command.the_collector.spawn.player_only"));
+            return 0;
+        }
+
+        ServerLevel level = player.serverLevel();
+        CollectorEntity collector = ModEntities.COLLECTOR.get().create(level);
+        if (collector == null) {
+            source.sendFailure(Component.translatable("command.the_collector.spawn.failed"));
+            return 0;
+        }
+
+        BlockPos spawnPos = player.blockPosition().offset(2, 0, 0);
+        collector.moveTo(spawnPos, player.getYRot(), 0.0F);
+        collector.setDebugFixed(true);
+        collector.setDebugNoDespawn(true);
+        level.addFreshEntity(collector);
+
+        source.sendSuccess(() -> Component.translatable(
+                "command.the_collector.spawn.static_success",
+                spawnPos.getX(), spawnPos.getY(), spawnPos.getZ()
         ).withStyle(ChatFormatting.GREEN), true);
         return 1;
     }
