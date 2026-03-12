@@ -7,23 +7,30 @@ Version anglaise : [README.en.md](README.en.md).
 
 **The Collector** est un mod Minecraft 1.21.1 (Forge) qui ajoute une créature rare et furtive :
 - elle repère les objets de valeur ;
-- elle vole (au sol et dans les coffres) ;
+- elle vole des objets au sol ;
+- elle peut voler des coffres (et leur contenu) ;
 - elle fuit ;
-- elle cache son butin dans une cache persistante.
-
-Le joueur peut ensuite traquer la cache et récupérer ses objets.
+- elle transfère le butin dans son royaume.
 
 ## Fonctionnalités V1
 
-- Entité `The Collector`
+- Entité `The Collector` (modèle Enderman + texture custom)
 - Spawn rare en Overworld (configurable)
 - IA à états (`IDLE`, `SCOUTING`, `COLLECTING`, `ESCAPING`, `DESPAWNING`)
 - Vol d'objets au sol
-- Vol d'objets de valeur dans les coffres
-- Inventaire interne limité
+- Vol de coffres et butin associé
 - Fuite puis disparition
-- Création d'une cache persistante
-- Objet de traque : `collector_compass`
+- Cache dans une dimension dédiée : `the_collector:collector_realm`
+- Salle de coffres 6x6 (V1) dans le royaume
+- Entrées Overworld aléatoires vers le royaume
+- Système de traque :
+  - boussole (`collector_compass`)
+  - commandes de localisation
+- Accès dangereux au royaume :
+  - reliques rares à obtenir
+  - craft du `collector_catalyst`
+  - rituel d'activation de l'entrée
+  - vague hostile à l'activation
 
 ## Configuration
 
@@ -40,6 +47,20 @@ Exemples de réglages :
 - `maxStolenStacks`
 - `stashEnabled`
 
+## Commandes
+
+- Joueur :
+  - `/collector locate`
+  - `/collector locate latest`
+  - `/collector locate nearest`
+  - `/collector locate all`
+  - `/collector entry locate`
+- Admin (OP niveau 2) :
+  - `/collector entry create`
+  - `/collector spawn_static` (spawn debug, fixe, sans disparition)
+
+Alias disponible : `/thecollector ...`
+
 ## Lancer en Développement
 
 ```powershell
@@ -55,6 +76,8 @@ Exemples de réglages :
 ## Auteur
 
 - Kérian
+- Kérian_Animals
+- kerian_animals
 
 ## Licence
 
