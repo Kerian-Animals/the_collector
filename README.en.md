@@ -5,7 +5,7 @@ French version: [README.md](README.md).
 
 ## Overview
 
-**The Collector** is a Minecraft 1.21.1 mod (Forge) that adds a rare and stealthy creature:
+**The Collector** is a NeoForge mod for Minecraft 1.21.* that adds a rare and stealthy creature:
 - it looks for valuable items
 - it steals (ground items and chest items)
 - it escapes
