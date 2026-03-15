@@ -5,7 +5,7 @@ Version anglaise : [README.en.md](README.en.md).
 
 ## Présentation
 
-**The Collector** est un mod Minecraft 1.21.1 (Forge) qui ajoute une créature rare et furtive :
+**The Collector** est un mod Minecraft 1.21.* pour NeoForge qui ajoute une créature rare et furtive :
 - elle repère les objets de valeur ;
 - elle vole (au sol et dans les coffres) ;
 - elle fuit ;
