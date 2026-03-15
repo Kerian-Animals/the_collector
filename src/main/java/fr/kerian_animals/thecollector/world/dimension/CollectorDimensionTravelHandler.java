@@ -11,13 +11,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class CollectorDimensionTravelHandler {
     private static final String TAG_TRAVEL_COOLDOWN = "the_collector_travel_cooldown";
     private static final String TAG_LAST_ENTRY_POS = "the_collector_last_entry_pos";
@@ -26,8 +27,8 @@ public final class CollectorDimensionTravelHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         if (player.serverLevel().isClientSide || !player.isCrouching()) {

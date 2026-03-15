@@ -83,7 +83,7 @@ public class CollectorCatalystItem extends Item {
 
     private static void triggerActivationDanger(ServerLevel level, BlockPos center, ServerPlayer activator) {
         level.playSound(null, center, SoundEvents.WARDEN_NEARBY_CLOSE, SoundSource.HOSTILE, 1.0F, 0.75F);
-        level.playSound(null, center, SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), SoundSource.BLOCKS, 1.0F, 0.65F);
+        level.playSound(null, center, SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.BLOCKS, 1.0F, 0.65F);
 
         for (int i = 0; i < 4; i++) {
             double angle = (Math.PI * 2.0D / 4.0D) * i;
