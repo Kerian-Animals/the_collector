@@ -6,10 +6,12 @@ import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.registry.ModItems;
 import fr.kerian_animals.thecollector.spawn.CollectorSpawnHandler;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.slf4j.Logger;
 
 @Mod(TheCollectorMod.MOD_ID)
@@ -17,13 +19,13 @@ public final class TheCollectorMod {
     public static final String MOD_ID = "the_collector";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public TheCollectorMod(FMLJavaModLoadingContext context) {
-        ModEntities.ENTITY_TYPES.register(context.getModEventBus());
-        ModItems.ITEMS.register(context.getModEventBus());
-        context.getModEventBus().addListener(this::onBuildTab);
+    public TheCollectorMod(IEventBus modEventBus, ModContainer modContainer) {
+        ModEntities.ENTITY_TYPES.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        modEventBus.addListener(this::onBuildTab);
 
-        context.registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
-        MinecraftForge.EVENT_BUS.register(new CollectorSpawnHandler());
+        modContainer.registerConfig(ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
+        NeoForge.EVENT_BUS.register(new CollectorSpawnHandler());
     }
 
     private void onBuildTab(BuildCreativeModeTabContentsEvent event) {
