@@ -2,6 +2,7 @@ package fr.kerian_animals.thecollector.stash;
 
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.lore.CollectorLoreBookFactory;
 import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
 import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
 import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
@@ -34,6 +35,7 @@ public final class CollectorStashManager {
         if (stolenItems.isEmpty()) {
             return;
         }
+        stolenItems.add(CollectorLoreBookFactory.createRandomFragment(level.random));
         if (TheCollectorConfig.BONUS_LOOT_ENABLED.get() && level.random.nextDouble() < 0.35D) {
             stolenItems.add(level.random.nextBoolean() ? new ItemStack(Items.EMERALD, 2) : new ItemStack(Items.GOLD_INGOT, 3));
         }
