@@ -52,6 +52,10 @@ Exemples de réglages :
 ./gradlew build
 ```
 
+## Compatibilite
+
+Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.0.167 -> 21.5.x`.
+
 ## Auteur
 
 - Kérian
