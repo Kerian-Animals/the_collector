@@ -1,4 +1,5 @@
 {
+  "itemGroup.the_collector": "Le Collectionneur",
   "item.the_collector.collector_compass": "Boussole du Collectionneur",
   "item.the_collector.collector_catalyst": "Catalyseur du Collectionneur",
   "item.the_collector.nether_relic_fragment": "Fragment de relique infernale",
@@ -31,5 +32,17 @@
   "dimension.the_collector.no_entry": "Impossible de trouver une sortie valide.",
   "dimension.the_collector.not_ready": "La dimension du Collectionneur n'est pas chargée.",
   "dimension.the_collector.entry_inactive": "L'entrée est instable. Active-la avec un Catalyseur rituel.",
-  "entity.the_collector.collector": "Le Collectionneur"
+  "entity.the_collector.collector": "Le Collectionneur",
+  "lore.the_collector.page.lost_leaf.1": "On croit qu'il vole l'or, les gemmes et les reliques par cupidité. C'est faux. Le Collectionneur ne convoite pas la richesse, mais le poids des choses.",
+  "lore.the_collector.page.lost_leaf.2": "Certaines possessions gardent une marque de leur propriétaire, comme si les mains, les batailles et les serments y laissaient une suie invisible. Il prend ce qui résonne encore.",
+  "lore.the_collector.page.lost_leaf.3": "J'ai suivi l'une de ses caches jusqu'à une pierre-guide enfouie dans de vieilles ruines. Ma boussole tournait autour comme un insecte autour d'une flamme froide. Ce n'était pas une cache. C'était une bouche fermée.",
+  "lore.the_collector.page.surveyor_journal.1": "J'ai trouvé trois de ces pierres là où ses traces s'arrêtaient net. Toujours la même impression : quelque chose observait depuis derrière le monde.",
+  "lore.the_collector.page.surveyor_journal.2": "La première nuit, j'ai cru à un autel. La seconde, à un tombeau. La troisième, j'ai compris l'agencement : quatre pierres sombres qui semblent pleurer autour du noyau.",
+  "lore.the_collector.page.surveyor_journal.3": "Plus loin, à hauteur d'homme, quatre flammes d'âme gardaient les vents comme des sentinelles. Je n'avais pas encore compris, mais j'avais déjà recopié le dessin.",
+  "lore.the_collector.page.scholar_note.1": "Le Collectionneur ne bâtit pas un royaume, il l'alimente. Chaque objet volé nourrit un lieu où s'accumulent la rareté, le souvenir et le manque.",
+  "lore.the_collector.page.scholar_note.2": "Les pierres d'entrée demeurent inertes tant qu'on ne leur rend pas une part de ce qu'il recherche. Les fragments issus des profondeurs, du feu ancien et de l'écho répondent le mieux.",
+  "lore.the_collector.page.scholar_note.3": "Réunis, ils donnent naissance à un catalyseur instable. Mais ceux qui l'emploient parlent d'un prix immédiat : des os relevés, un regard venu de l'ombre et une douleur portée dans le sang.",
+  "lore.the_collector.page.final_page.1": "J'ai tenté le rite au crépuscule : quatre pierres en croix autour du cœur, et quatre lanternes d'âme dressées plus loin, tournées vers les vents cardinaux.",
+  "lore.the_collector.page.final_page.2": "Puis j'ai posé le catalyseur contre la pierre-guide. Un grondement m'a répondu. La pierre s'est éveillée, mais rien ne s'est ouvert tant que je suis resté debout comme un sot.",
+  "lore.the_collector.page.final_page.3": "Ce n'est qu'en m'abaissant, presque en signe de soumission, que le passage m'a saisi. J'ai entrevu une salle taillée pour entreposer les regrets du monde."
 }

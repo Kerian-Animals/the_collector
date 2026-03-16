@@ -2,8 +2,10 @@ package fr.kerian_animals.thecollector.world.vault;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 
 import java.util.ArrayList;
@@ -39,10 +41,8 @@ public final class CollectorVaultManager {
         level.setBlock(c.offset(-2, 1, -2), Blocks.SOUL_LANTERN.defaultBlockState(), 3);
         level.setBlock(c.offset(2, 1, -2), Blocks.SOUL_LANTERN.defaultBlockState(), 3);
 
-        for (BlockPos pos : chestSlots()) {
-            if (level.getBlockState(pos).isAir()) {
-                level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
-            }
+        for (BlockPos pos : storageSlots()) {
+            ensureStorageContainer(level, pos);
         }
     }
 
@@ -55,27 +55,30 @@ public final class CollectorVaultManager {
             }
         }
 
-        BlockPos lastUsed = chestSlots().getFirst();
-        for (BlockPos chestPos : chestSlots()) {
-            if (!(level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest)) {
+        BlockPos lastUsed = storageSlots().getFirst();
+        for (BlockPos storagePos : storageSlots()) {
+            Container container = ensureStorageContainer(level, storagePos);
+            if (container == null) {
                 continue;
             }
-            lastUsed = chestPos;
-            for (int i = 0; i < chest.getContainerSize() && !remaining.isEmpty(); i++) {
-                if (!chest.getItem(i).isEmpty()) {
+            lastUsed = storagePos;
+            for (int i = 0; i < container.getContainerSize() && !remaining.isEmpty(); i++) {
+                if (!container.getItem(i).isEmpty()) {
                     continue;
                 }
                 ItemStack stack = remaining.removeFirst();
-                chest.setItem(i, stack);
+                container.setItem(i, stack);
             }
-            chest.setChanged();
+            if (container instanceof BlockEntity blockEntity) {
+                blockEntity.setChanged();
+            }
             if (remaining.isEmpty()) {
-                return chestPos;
+                return storagePos;
             }
         }
 
-        // Overflow safety: if every chest is full, drop leftovers near the first chest.
-        BlockPos overflowPos = chestSlots().getFirst().above();
+        // Overflow safety: if every container is full, drop leftovers near the first storage slot.
+        BlockPos overflowPos = storageSlots().getFirst().above();
         for (ItemStack left : remaining) {
             net.minecraft.world.entity.item.ItemEntity dropped = new net.minecraft.world.entity.item.ItemEntity(
                     level, overflowPos.getX() + 0.5D, overflowPos.getY() + 0.5D, overflowPos.getZ() + 0.5D, left
@@ -85,17 +88,32 @@ public final class CollectorVaultManager {
         return lastUsed;
     }
 
-    private static List<BlockPos> chestSlots() {
+    private static Container ensureStorageContainer(ServerLevel level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Container container) {
+            return container;
+        }
+
+        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+        if (level.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
+            return chest;
+        }
+
+        level.setBlock(pos, Blocks.BARREL.defaultBlockState(), 3);
+        blockEntity = level.getBlockEntity(pos);
+        return blockEntity instanceof Container container ? container : null;
+    }
+
+    private static List<BlockPos> storageSlots() {
         BlockPos c = VAULT_CENTER;
         return List.of(
                 c.offset(-2, 0, 2),
-                c.offset(-1, 0, 2),
                 c.offset(0, 0, 2),
-                c.offset(1, 0, 2),
                 c.offset(2, 0, 2),
-                c.offset(-2, 0, 1),
-                c.offset(2, 0, 1),
+                c.offset(-1, 0, 1),
+                c.offset(1, 0, 1),
                 c.offset(-2, 0, 0),
+                c.offset(0, 0, 0),
                 c.offset(2, 0, 0)
         );
     }

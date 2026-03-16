@@ -1,4 +1,5 @@
 {
+  "itemGroup.the_collector": "The Collector",
   "item.the_collector.collector_compass": "Collector Compass",
   "item.the_collector.collector_catalyst": "Collector Catalyst",
   "item.the_collector.nether_relic_fragment": "Nether Relic Fragment",
@@ -31,5 +32,17 @@
   "dimension.the_collector.no_entry": "No valid exit entry was found.",
   "dimension.the_collector.not_ready": "Collector dimension is not loaded.",
   "dimension.the_collector.entry_inactive": "Entry is unstable. Activate it with a ritual Catalyst.",
-  "entity.the_collector.collector": "The Collector"
+  "entity.the_collector.collector": "The Collector",
+  "lore.the_collector.page.lost_leaf.1": "People say it steals gold, gems, and relics out of greed. They are wrong. The Collector does not crave wealth, but weight.",
+  "lore.the_collector.page.lost_leaf.2": "Some possessions keep the mark of their owner, as if hands, battles, and vows leave behind an invisible soot. It takes what still resonates.",
+  "lore.the_collector.page.lost_leaf.3": "I followed one of its stashes to a guiding stone buried in old ruins. My compass circled it like an insect around cold fire. It was not a stash. It was a shut mouth.",
+  "lore.the_collector.page.surveyor_journal.1": "I found three of those stones where its tracks ended abruptly. Always the same feeling: something watching from behind the world.",
+  "lore.the_collector.page.surveyor_journal.2": "On the first night I mistook it for an altar. On the second, for a tomb. On the third, I saw the arrangement: four dark stones that seemed to weep around the core.",
+  "lore.the_collector.page.surveyor_journal.3": "Farther out, at the height of a man, four soul flames guarded the winds like sentries. I did not understand yet, but I had already copied the sketch.",
+  "lore.the_collector.page.scholar_note.1": "The Collector does not build a kingdom. It feeds one. Every stolen object nourishes a place where rarity, memory, and absence gather.",
+  "lore.the_collector.page.scholar_note.2": "The entry stones remain inert unless one returns a shard of what it seeks. Fragments from the deep, the ancient fire, and the echo answer most readily.",
+  "lore.the_collector.page.scholar_note.3": "Bound together, they yield an unstable catalyst. Yet those who used it spoke of an immediate price: risen bones, a gaze from the dark, and pain carried in the blood.",
+  "lore.the_collector.page.final_page.1": "I attempted the rite at dusk: four stones in a cross around the heart, and four soul lanterns set beyond them facing the cardinal winds.",
+  "lore.the_collector.page.final_page.2": "Then I pressed the catalyst against the guiding stone. A groan answered me. The stone awakened, yet nothing opened while I stood there like a fool.",
+  "lore.the_collector.page.final_page.3": "Only when I lowered myself, almost as if in submission, did the passage take hold of me. I glimpsed a chamber built to store the world's regrets."
 }
