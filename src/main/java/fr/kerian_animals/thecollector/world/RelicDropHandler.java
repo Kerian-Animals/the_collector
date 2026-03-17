@@ -40,7 +40,7 @@ public final class RelicDropHandler {
         }
 
         if (event.getEntity().getType() == EntityType.WARDEN) {
-            tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 0.50D);
+            tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 1.0D);
         }
 
     }
