@@ -35,9 +35,14 @@ public final class RelicDropHandler {
             tryDrop(event, new ItemStack(ModItems.CAVERN_RELIC_FRAGMENT.get()), 0.025D);
         }
 
-        if (event.getEntity().getType() == EntityType.ENDERMAN && level.dimension() == Level.OVERWORLD && event.getEntity().getY() < 20) {
+        if (event.getEntity().getType() == EntityType.ENDERMAN && level.dimension() == Level.OVERWORLD && event.getEntity().getY() < 40) {
             tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 0.05D);
         }
+
+        if (event.getEntity().getType() == EntityType.WARDEN) {
+            tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 0.50D);
+        }
+
     }
 
     private static void tryDrop(LivingDropsEvent event, ItemStack stack, double chance) {
