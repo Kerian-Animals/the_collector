@@ -6,6 +6,7 @@ import fr.kerian_animals.thecollector.registry.ModCreativeTabs;
 import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.registry.ModItems;
 import fr.kerian_animals.thecollector.spawn.CollectorSpawnHandler;
+import fr.kerian_animals.thecollector.world.CollectorMiniCacheManager;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -25,6 +26,7 @@ public final class TheCollectorMod {
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
         NeoForge.EVENT_BUS.register(new CollectorSpawnHandler());
+        NeoForge.EVENT_BUS.register(new CollectorMiniCacheManager());
     }
 }
 

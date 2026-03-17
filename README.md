@@ -24,6 +24,7 @@ Le joueur peut ensuite traquer la cache et récupérer ses objets.
 - Fuite puis disparition
 - Création d'une cache persistante
 - Objet de traque : `collector_compass`
+- Mini-caches générées en Overworld avec un petit butin thématique
 
 ## Configuration
 
@@ -39,6 +40,7 @@ Exemples de réglages :
 - `maxStealsPerChest`
 - `maxStolenStacks`
 - `stashEnabled`
+- `miniCacheEnabled`
 
 ## Lancer en Développement
 
@@ -54,7 +56,7 @@ Exemples de réglages :
 
 ## Compatibilite
 
-Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.0.167 -> 21.5.x`.
+Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.1.220 -> 21.5.x`.
 
 ## Auteur
 
