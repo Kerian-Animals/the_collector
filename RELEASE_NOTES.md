@@ -7,12 +7,20 @@
 - Ajout de traces du Collectionneur au sol après ses vols pour guider approximativement le joueur vers le lieu du rituel.
 - Ajout du bloc visuel animé `collector_trace` utilisé pour matérialiser ces résidus en jeu.
 
+#### Corrigé
+
+- Correction de la Boussole du Collectionneur: elle met maintenant à jour sa direction visuelle en pointant correctement vers la cache ou l'entrée la plus proche.
+
 ### English
 
 #### Added
 
 - Added Collector ground traces after thefts to guide players approximately toward the ritual site.
 - Added the animated `collector_trace` visual block used to materialize those residues in game.
+
+#### Fixed
+
+- Fixed the Collector Compass so its visual needle now updates correctly toward the stash or nearest entry.
 
 ## [1.1.2] - 2026-03-17
 
