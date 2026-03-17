@@ -69,6 +69,34 @@ public final class TheCollectorConfig {
             .comment("If true, stash can include a tiny bonus loot.")
             .define("bonusLootEnabled", true);
 
+    public static final ModConfigSpec.BooleanValue MINI_CACHE_ENABLED = BUILDER
+            .comment("If true, small Collector mini-caches can generate in the Overworld.")
+            .define("miniCacheEnabled", true);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_CHECK_INTERVAL_TICKS = BUILDER
+            .comment("How often mini-cache generation is checked.")
+            .defineInRange("miniCacheCheckIntervalTicks", 1_200, 200, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_MIN_DISTANCE = BUILDER
+            .comment("Minimum distance from a player when placing a mini-cache.")
+            .defineInRange("miniCacheMinDistance", 48, 16, 512);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_MAX_DISTANCE = BUILDER
+            .comment("Maximum distance from a player when placing a mini-cache.")
+            .defineInRange("miniCacheMaxDistance", 128, 16, 512);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_MIN_SPACING = BUILDER
+            .comment("Minimum spacing between two mini-caches.")
+            .defineInRange("miniCacheMinSpacing", 96, 16, 1024);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_PLAYER_RADIUS = BUILDER
+            .comment("Radius around a player used to count nearby mini-caches.")
+            .defineInRange("miniCachePlayerRadius", 160, 32, 1024);
+
+    public static final ModConfigSpec.IntValue MINI_CACHE_MAX_PER_AREA = BUILDER
+            .comment("Maximum number of mini-caches allowed around a player area.")
+            .defineInRange("miniCacheMaxPerArea", 2, 1, 32);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private TheCollectorConfig() {

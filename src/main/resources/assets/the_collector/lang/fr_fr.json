@@ -5,6 +5,7 @@
   "item.the_collector.nether_relic_fragment": "Fragment de relique infernale",
   "item.the_collector.cavern_relic_fragment": "Fragment de relique cavernicole",
   "item.the_collector.echo_relic_fragment": "Fragment de relique d'écho",
+  "feature.the_collector.mini_cache": "Mini-cache du Collectionneur",
   "item.the_collector.collector_compass.no_stash": "Aucune cache du Collectionneur n'est connue pour le moment.",
   "item.the_collector.collector_compass.found": "Dernière cache: X=%s Y=%s Z=%s (%s)",
   "item.the_collector.collector_compass.hint": "Direction: %s | Distance: ~%s blocs",

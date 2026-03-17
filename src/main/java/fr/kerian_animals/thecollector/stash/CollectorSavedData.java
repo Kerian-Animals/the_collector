@@ -21,6 +21,7 @@ public class CollectorSavedData extends SavedData {
     private final Map<UUID, CollectorStash> stashes = new HashMap<>();
     private final Map<UUID, UUID> playerLastStash = new HashMap<>();
     private final Map<UUID, CollectorEntry> entries = new HashMap<>();
+    private final Map<UUID, CollectorMiniCache> miniCaches = new HashMap<>();
 
     public static CollectorSavedData get(ServerLevel level) {
         ServerLevel overworld = level.getServer().overworld();
@@ -50,6 +51,12 @@ public class CollectorSavedData extends SavedData {
             CollectorEntry entry = CollectorEntry.load(entryList.getCompound(i));
             data.entries.put(entry.id(), entry);
         }
+
+        ListTag miniCacheList = tag.getList("MiniCaches", Tag.TAG_COMPOUND);
+        for (int i = 0; i < miniCacheList.size(); i++) {
+            CollectorMiniCache miniCache = CollectorMiniCache.load(miniCacheList.getCompound(i));
+            data.miniCaches.put(miniCache.id(), miniCache);
+        }
         return data;
     }
 
@@ -75,6 +82,12 @@ public class CollectorSavedData extends SavedData {
             entriesTag.add(entry.save());
         }
         tag.put("Entries", entriesTag);
+
+        ListTag miniCachesTag = new ListTag();
+        for (CollectorMiniCache miniCache : this.miniCaches.values()) {
+            miniCachesTag.add(miniCache.save());
+        }
+        tag.put("MiniCaches", miniCachesTag);
         return tag;
     }
 
@@ -138,6 +151,15 @@ public class CollectorSavedData extends SavedData {
         this.entries.put(entryId, current.withActivated(activated));
         setDirty();
         return true;
+    }
+
+    public void addMiniCache(CollectorMiniCache miniCache) {
+        this.miniCaches.put(miniCache.id(), miniCache);
+        setDirty();
+    }
+
+    public Collection<CollectorMiniCache> getAllMiniCaches() {
+        return this.miniCaches.values();
     }
 }
 
