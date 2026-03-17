@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:forging_the_catalyst",
+  "display": {
+    "icon": {
+      "id": "minecraft:lodestone"
+    },
+    "title": {
+      "translate": "advancements.the_collector.the_stone_listens.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.the_stone_listens.description"
+    },
+    "x": 1.0,
+    "y": 4.0,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -148,6 +148,7 @@ public final class CollectorCommandHandler {
         }
 
         CollectorEntry e = entry.get();
+        CollectorEntryManager.ensureEntryStructure(level, e);
         source.sendSuccess(() -> Component.translatable(
                 "command.the_collector.entry.locate",
                 e.pos().getX(), e.pos().getY(), e.pos().getZ(), "minecraft:overworld",

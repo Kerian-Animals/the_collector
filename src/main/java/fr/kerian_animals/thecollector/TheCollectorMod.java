@@ -1,6 +1,7 @@
 package fr.kerian_animals.thecollector;
 
 import com.mojang.logging.LogUtils;
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementManager;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.registry.ModCreativeTabs;
 import fr.kerian_animals.thecollector.registry.ModBlocks;
@@ -27,6 +28,7 @@ public final class TheCollectorMod {
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
+        NeoForge.EVENT_BUS.register(new CollectorAdvancementManager());
         NeoForge.EVENT_BUS.register(new CollectorSpawnHandler());
         NeoForge.EVENT_BUS.register(new CollectorMiniCacheManager());
     }

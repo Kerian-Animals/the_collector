@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:relics_of_the_hunt",
+  "display": {
+    "icon": {
+      "id": "the_collector:collector_catalyst"
+    },
+    "title": {
+      "translate": "advancements.the_collector.forging_the_catalyst.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.forging_the_catalyst.description"
+    },
+    "x": 1.0,
+    "y": 3.0,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

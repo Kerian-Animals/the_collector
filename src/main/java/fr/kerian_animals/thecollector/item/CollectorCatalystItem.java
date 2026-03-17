@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.item;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import net.minecraft.ChatFormatting;
@@ -59,6 +60,7 @@ public class CollectorCatalystItem extends Item {
         data.setEntryActivated(entry.id(), true);
         context.getItemInHand().shrink(1);
         triggerActivationDanger(level, clicked, player);
+        CollectorAdvancementHelper.award(player, "the_stone_listens");
 
         player.sendSystemMessage(Component.translatable("item.the_collector.collector_catalyst.activated")
                 .withStyle(ChatFormatting.GOLD));

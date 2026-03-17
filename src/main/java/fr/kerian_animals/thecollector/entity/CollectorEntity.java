@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.entity;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.goal.CollectorCollectItemGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorEscapeGoal;
@@ -237,6 +238,9 @@ public class CollectorEntity extends PathfinderMob {
 
     public void recordTheftAt(BlockPos pos) {
         this.lastTheftPos = pos.immutable();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            CollectorAdvancementHelper.awardNearby(serverLevel, pos, 24.0D, "something_is_missing");
+        }
     }
 
     public @Nullable BlockPos getLastTheftPos() {

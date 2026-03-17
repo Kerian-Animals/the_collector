@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:the_stone_listens",
+  "display": {
+    "icon": {
+      "id": "minecraft:ender_eye"
+    },
+    "title": {
+      "translate": "advancements.the_collector.the_door_between_worlds.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.the_door_between_worlds.description"
+    },
+    "x": 1.0,
+    "y": 5.0,
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
