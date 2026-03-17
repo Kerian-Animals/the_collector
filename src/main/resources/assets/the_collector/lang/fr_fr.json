@@ -2,6 +2,7 @@
   "itemGroup.the_collector": "Le Collectionneur",
   "item.the_collector.collector_compass": "Boussole du Collectionneur",
   "item.the_collector.collector_catalyst": "Catalyseur du Collectionneur",
+  "block.the_collector.collector_trace": "Trace du Collectionneur",
   "item.the_collector.nether_relic_fragment": "Fragment de relique infernale",
   "item.the_collector.cavern_relic_fragment": "Fragment de relique cavernicole",
   "item.the_collector.echo_relic_fragment": "Fragment de relique d'écho",

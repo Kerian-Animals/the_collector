@@ -21,6 +21,7 @@ public final class ModCreativeTabs {
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.COLLECTOR_COMPASS.get());
                         output.accept(ModItems.COLLECTOR_CATALYST.get());
+                        output.accept(ModItems.COLLECTOR_TRACE.get());
                         output.accept(ModItems.NETHER_RELIC_FRAGMENT.get());
                         output.accept(ModItems.CAVERN_RELIC_FRAGMENT.get());
                         output.accept(ModItems.ECHO_RELIC_FRAGMENT.get());

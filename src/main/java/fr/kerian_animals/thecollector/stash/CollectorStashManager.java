@@ -3,6 +3,8 @@ package fr.kerian_animals.thecollector.stash;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.CollectorEntity;
 import fr.kerian_animals.thecollector.lore.CollectorLoreBookFactory;
+import fr.kerian_animals.thecollector.stash.CollectorEntry;
+import fr.kerian_animals.thecollector.world.CollectorResidueManager;
 import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
 import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
 import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public final class CollectorStashManager {
@@ -44,13 +47,12 @@ public final class CollectorStashManager {
         BlockPos stashPos;
         net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> stashDimension;
 
+        CollectorEntry ritualEntry = CollectorEntryManager.ensureEntryExists(level.getServer().overworld(), collector.blockPosition());
+
         if (realm != null) {
             CollectorVaultManager.ensureVaultBuilt(realm);
             stashPos = CollectorVaultManager.depositLoot(realm, stolenItems);
             stashDimension = ModDimensions.COLLECTOR_REALM;
-
-            // Ensure at least one random discoverable entry exists in the Overworld.
-            CollectorEntryManager.ensureEntryExists(level.getServer().overworld(), collector.blockPosition());
         } else {
             BlockPos fallback = findStashPos(level, collector.blockPosition());
             if (fallback == null) {
@@ -74,6 +76,9 @@ public final class CollectorStashManager {
         CollectorStash stash = new CollectorStash(stashId, stashDimension, stashPos, stolenItems, level.getGameTime());
         CollectorSavedData data = CollectorSavedData.get(level);
         data.addStash(stash);
+
+        Optional.ofNullable(collector.getLastTheftPos())
+                .ifPresent(theftPos -> CollectorResidueManager.spawnResidueTrail(level.getServer().overworld(), theftPos, ritualEntry.pos()));
 
         List<ServerPlayer> nearbyPlayers = level.players().stream()
                 .filter(player -> player.distanceToSqr(collector) <= 128 * 128)

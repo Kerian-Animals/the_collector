@@ -3,6 +3,7 @@ package fr.kerian_animals.thecollector.registry;
 import fr.kerian_animals.thecollector.TheCollectorMod;
 import fr.kerian_animals.thecollector.item.CollectorCatalystItem;
 import fr.kerian_animals.thecollector.item.CollectorCompassItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -34,6 +35,11 @@ public final class ModItems {
     public static final DeferredHolder<Item, Item> COLLECTOR_CATALYST = ITEMS.register(
             "collector_catalyst",
             () -> new CollectorCatalystItem(new Item.Properties().stacksTo(16))
+    );
+
+    public static final DeferredHolder<Item, Item> COLLECTOR_TRACE = ITEMS.register(
+            "collector_trace",
+            () -> new BlockItem(ModBlocks.COLLECTOR_TRACE.get(), new Item.Properties())
     );
 
     private ModItems() {

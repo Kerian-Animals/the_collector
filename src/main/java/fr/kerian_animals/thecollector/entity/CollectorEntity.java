@@ -7,6 +7,7 @@ import fr.kerian_animals.thecollector.entity.goal.CollectorScoutGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorStealChestGoal;
 import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import fr.kerian_animals.thecollector.stash.CollectorStashManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -40,6 +41,7 @@ public class CollectorEntity extends PathfinderMob {
     private static final String TAG_AGE = "AgeTicks";
     private static final String TAG_DEBUG_FIXED = "DebugFixed";
     private static final String TAG_DEBUG_NO_DESPAWN = "DebugNoDespawn";
+    private static final String TAG_LAST_THEFT_POS = "LastTheftPos";
 
     private CollectorState state = CollectorState.IDLE;
     private @Nullable ItemEntity currentTarget;
@@ -50,6 +52,7 @@ public class CollectorEntity extends PathfinderMob {
     private int escapeTicks = 0;
     private boolean debugFixed = false;
     private boolean debugNoDespawn = false;
+    private @Nullable BlockPos lastTheftPos;
 
     public CollectorEntity(EntityType<? extends CollectorEntity> entityType, Level level) {
         super(entityType, level);
@@ -161,6 +164,7 @@ public class CollectorEntity extends PathfinderMob {
             return false;
         }
 
+        recordTheftAt(itemEntity.blockPosition());
         itemEntity.discard();
         return true;
     }
@@ -231,6 +235,14 @@ public class CollectorEntity extends PathfinderMob {
         this.debugNoDespawn = debugNoDespawn;
     }
 
+    public void recordTheftAt(BlockPos pos) {
+        this.lastTheftPos = pos.immutable();
+    }
+
+    public @Nullable BlockPos getLastTheftPos() {
+        return this.lastTheftPos;
+    }
+
     private int firstEmptySlot() {
         int maxSlots = Math.min(TheCollectorConfig.COLLECTOR_INVENTORY_SLOTS.get(), this.stolenInventory.getContainerSize());
         for (int i = 0; i < maxSlots; i++) {
@@ -259,6 +271,9 @@ public class CollectorEntity extends PathfinderMob {
         tag.putInt(TAG_AGE, this.ageTicks);
         tag.putBoolean(TAG_DEBUG_FIXED, this.debugFixed);
         tag.putBoolean(TAG_DEBUG_NO_DESPAWN, this.debugNoDespawn);
+        if (this.lastTheftPos != null) {
+            tag.putLong(TAG_LAST_THEFT_POS, this.lastTheftPos.asLong());
+        }
 
         ListTag listTag = new ListTag();
         int maxSlots = Math.min(TheCollectorConfig.COLLECTOR_INVENTORY_SLOTS.get(), this.stolenInventory.getContainerSize());
@@ -289,6 +304,7 @@ public class CollectorEntity extends PathfinderMob {
         this.ageTicks = tag.getInt(TAG_AGE);
         this.debugFixed = tag.getBoolean(TAG_DEBUG_FIXED);
         this.debugNoDespawn = tag.getBoolean(TAG_DEBUG_NO_DESPAWN);
+        this.lastTheftPos = tag.contains(TAG_LAST_THEFT_POS) ? BlockPos.of(tag.getLong(TAG_LAST_THEFT_POS)) : null;
         this.setNoAi(this.debugFixed);
 
         for (int i = 0; i < this.stolenInventory.getContainerSize(); i++) {

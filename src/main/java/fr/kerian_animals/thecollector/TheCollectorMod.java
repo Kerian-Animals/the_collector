@@ -3,6 +3,7 @@ package fr.kerian_animals.thecollector;
 import com.mojang.logging.LogUtils;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.registry.ModCreativeTabs;
+import fr.kerian_animals.thecollector.registry.ModBlocks;
 import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.registry.ModItems;
 import fr.kerian_animals.thecollector.spawn.CollectorSpawnHandler;
@@ -20,6 +21,7 @@ public final class TheCollectorMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public TheCollectorMod(IEventBus modEventBus, ModContainer modContainer) {
+        ModBlocks.BLOCKS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);

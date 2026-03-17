@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "the_collector:block/collector_trace"
+    }
+  }
+}

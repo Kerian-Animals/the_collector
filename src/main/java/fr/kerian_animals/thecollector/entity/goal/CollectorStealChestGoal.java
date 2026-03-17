@@ -161,6 +161,7 @@ public class CollectorStealChestGoal extends Goal {
 
     private void stealWholeChest(ChestBlockEntity chest, BlockPos pos) {
         List<ItemStack> toSteal = collectStacksForTheft(chest, pos);
+        collector.recordTheftAt(pos);
 
         // The Collector steals the physical chest block too.
         toSteal.add(new ItemStack(Items.CHEST));

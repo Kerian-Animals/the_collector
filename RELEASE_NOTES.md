@@ -1,3 +1,19 @@
+## [1.1.3] - 2026-03-17
+
+### Français
+
+#### Ajouté
+
+- Ajout de traces du Collectionneur au sol après ses vols pour guider approximativement le joueur vers le lieu du rituel.
+- Ajout du bloc visuel animé `collector_trace` utilisé pour matérialiser ces résidus en jeu.
+
+### English
+
+#### Added
+
+- Added Collector ground traces after thefts to guide players approximately toward the ritual site.
+- Added the animated `collector_trace` visual block used to materialize those residues in game.
+
 ## [1.1.2] - 2026-03-17
 
 ### Français
