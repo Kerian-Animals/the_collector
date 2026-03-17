@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.world;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.lore.CollectorLoreBookFactory;
 import fr.kerian_animals.thecollector.registry.ModItems;
@@ -64,6 +65,7 @@ public final class CollectorMiniCacheManager {
         buildMiniCache(level, cachePos);
         fillCacheChest(level, cachePos);
         data.addMiniCache(new CollectorMiniCache(UUID.randomUUID(), cachePos, level.getGameTime()));
+        CollectorAdvancementHelper.award(anchor, "a_hidden_stash");
     }
 
     private static BlockPos findCachePos(ServerLevel level, BlockPos around, CollectorSavedData data) {
@@ -76,15 +78,26 @@ public final class CollectorMiniCacheManager {
             int distance = minDistance + level.random.nextInt(maxDistance - minDistance + 1);
             int x = around.getX() + (int) Math.round(Math.cos(angle) * distance);
             int z = around.getZ() + (int) Math.round(Math.sin(angle) * distance);
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos pos = new BlockPos(x, Math.max(level.getMinBuildHeight() + 1, y), z);
+            BlockPos pos = findOpenCachePosInColumn(level, x, z);
 
-            if (!isValidCachePos(level, pos)) {
+            if (pos == null) {
                 continue;
             }
             boolean tooClose = data.getAllMiniCaches().stream()
                     .anyMatch(cache -> cache.pos().distSqr(pos) < square(minSpacing));
             if (!tooClose) {
+                return pos;
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos findOpenCachePosInColumn(ServerLevel level, int x, int z) {
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        int minY = Math.max(level.getMinBuildHeight() + 1, topY - 48);
+        for (int y = Math.max(level.getMinBuildHeight() + 1, topY); y >= minY; y--) {
+            BlockPos pos = new BlockPos(x, y, z);
+            if (isValidCachePos(level, pos)) {
                 return pos;
             }
         }
@@ -119,6 +132,7 @@ public final class CollectorMiniCacheManager {
     }
 
     private static void buildMiniCache(ServerLevel level, BlockPos center) {
+        clearVolume(level, center, 2, 1);
         Block[] floorPalette = new Block[]{
                 Blocks.BLACKSTONE,
                 Blocks.GILDED_BLACKSTONE,
@@ -229,5 +243,18 @@ public final class CollectorMiniCacheManager {
 
     private static double square(int value) {
         return (double) value * value;
+    }
+
+    private static void clearVolume(ServerLevel level, BlockPos center, int radius, int height) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                for (int dy = 0; dy <= height; dy++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
     }
 }

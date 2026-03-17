@@ -1,3 +1,39 @@
+## [1.1.4] - 2026-03-17
+
+### Français
+
+#### Ajouté
+
+- Ajout d'un arbre complet d'advancements pour la progression du Collectionneur, avec objectifs cachés et nouvelles descriptions immersives.
+- Ajout des traductions associées pour les advancements en anglais et en français.
+- Ajout d'un comportement chaotique pour la Boussole du Collectionneur à moins de 10 blocs de sa cible afin de signaler l'arrivée au lieu exact.
+
+#### Corrigé
+
+- Correction du modèle de la Boussole du Collectionneur pour utiliser les bonnes frames vanilla du compass.
+
+#### Modifié
+
+- Les entrées du Collectionneur connues mais absentes dans le monde sont désormais reconstruites automatiquement.
+- La génération des structures du Collectionneur privilégie maintenant des espaces déjà ouverts en surface ou en grotte, au lieu d'apparaître enfermée dans des blocs.
+
+### English
+
+#### Added
+
+- Added a full Collector advancement tree with hidden goals and new atmospheric descriptions.
+- Added the related advancement translations in English and French.
+- Added a chaotic behavior for the Collector Compass within 10 blocks of its target to signal arrival at the exact location.
+
+#### Fixed
+
+- Fixed the Collector Compass item model to use the proper vanilla compass frame sequence.
+
+#### Changed
+
+- Collector entries that are known but missing from the world are now rebuilt automatically.
+- Collector structure generation now prefers already open spaces on the surface or in caves instead of appearing buried inside blocks.
+
 ## [1.1.3] - 2026-03-17
 
 ### Français

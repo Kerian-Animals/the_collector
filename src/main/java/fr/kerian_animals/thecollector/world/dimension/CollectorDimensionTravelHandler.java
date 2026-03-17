@@ -1,6 +1,7 @@
 package fr.kerian_animals.thecollector.world.dimension;
 
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
@@ -85,6 +86,7 @@ public final class CollectorDimensionTravelHandler {
                 entity -> {
                 }
         ));
+        CollectorAdvancementHelper.award(player, "the_door_between_worlds");
         player.sendSystemMessage(Component.translatable("dimension.the_collector.entered"));
     }
 

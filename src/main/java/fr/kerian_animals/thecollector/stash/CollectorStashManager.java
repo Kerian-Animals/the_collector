@@ -92,9 +92,19 @@ public final class CollectorStashManager {
         for (int i = 0; i < 32; i++) {
             int x = around.getX() + level.random.nextInt(64) - 32;
             int z = around.getZ() + level.random.nextInt(64) - 32;
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos candidate = new BlockPos(x, Math.max(level.getMinBuildHeight() + 1, y - 1), z);
+            BlockPos candidate = findOpenStashPosInColumn(level, x, z);
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
 
+    private static BlockPos findOpenStashPosInColumn(ServerLevel level, int x, int z) {
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        int minY = Math.max(level.getMinBuildHeight() + 1, topY - 48);
+        for (int y = Math.max(level.getMinBuildHeight() + 1, topY - 1); y >= minY; y--) {
+            BlockPos candidate = new BlockPos(x, y, z);
             if (isValidStashPos(level, candidate)) {
                 return candidate;
             }
@@ -106,11 +116,18 @@ public final class CollectorStashManager {
         if (!level.getWorldBorder().isWithinBounds(pos)) {
             return false;
         }
-        if (!level.getBlockState(pos).canBeReplaced()) {
-            return false;
-        }
-        if (!level.getBlockState(pos.below()).isSolidRender(level, pos.below())) {
-            return false;
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                BlockPos floor = pos.offset(dx, -1, dz);
+                BlockPos body = pos.offset(dx, 0, dz);
+                BlockPos above = pos.offset(dx, 1, dz);
+                if (!level.getBlockState(floor).isSolidRender(level, floor)) {
+                    return false;
+                }
+                if (!canReplace(level, body) || !canReplace(level, above)) {
+                    return false;
+                }
+            }
         }
         return level.getFluidState(pos).isEmpty();
     }
@@ -124,11 +141,13 @@ public final class CollectorStashManager {
             pos = center;
         }
 
-        // Force a valid surface and empty placement space so stash creation never silently fails.
-        level.setBlock(pos.below(), Blocks.STONE.defaultBlockState(), 3);
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-        if (!level.getFluidState(pos).isEmpty()) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        // Force a valid floor and open chamber so stash creation never spawns buried in stone.
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                level.setBlock(pos.offset(dx, -1, dz), Blocks.STONE.defaultBlockState(), 3);
+                level.setBlock(pos.offset(dx, 0, dz), Blocks.AIR.defaultBlockState(), 3);
+                level.setBlock(pos.offset(dx, 1, dz), Blocks.AIR.defaultBlockState(), 3);
+            }
         }
         return pos;
     }
@@ -153,6 +172,7 @@ public final class CollectorStashManager {
     }
 
     private static void buildStashStructure(ServerLevel level, BlockPos center) {
+        clearVolume(level, center, 3, 1);
         Block[] floorPalette = new Block[]{
                 Blocks.COBBLED_DEEPSLATE, Blocks.MOSSY_COBBLESTONE, Blocks.TUFF_BRICKS
         };
@@ -194,6 +214,23 @@ public final class CollectorStashManager {
     private static void placeBlockIfReplaceable(ServerLevel level, BlockPos pos, Block block) {
         if (level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir()) {
             level.setBlock(pos, block.defaultBlockState(), 3);
+        }
+    }
+
+    private static boolean canReplace(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir();
+    }
+
+    private static void clearVolume(ServerLevel level, BlockPos center, int radius, int height) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                for (int dy = 0; dy <= height; dy++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
         }
     }
 }
