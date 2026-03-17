@@ -24,6 +24,7 @@ Then the player can track the stash and recover the stolen items.
 - Escape and despawn behavior
 - Persistent stash creation
 - Tracking item: `collector_compass`
+- Mini-caches generated in the Overworld with restrained thematic loot
 
 ## Configuration
 
@@ -39,6 +40,7 @@ Main settings include:
 - `maxStealsPerChest`
 - `maxStolenStacks`
 - `stashEnabled`
+- `miniCacheEnabled`
 
 ## Run in dev
 
@@ -51,6 +53,10 @@ Main settings include:
 ```powershell
 ./gradlew build
 ```
+
+## Compatibility
+
+The mod targets `Minecraft 1.21.1 -> 1.21.5` with `NeoForge 21.1.220 -> 21.5.x`.
 
 ## Author
 
