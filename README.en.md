@@ -55,6 +55,12 @@ The mod combines:
 - Lore and hint tooltips on resonance-related items
 - Contextual feedback during the experimentation steps
 - Alembic GUI styled after the vanilla brewing stand
+- Optional **JEI** integration to display:
+- the mod's vanilla crafting recipes;
+- `Unstable Resonance` trace capture;
+- alembic distillation;
+- cauldron crystallization;
+- the Collector entry activation ritual.
 
 ## Configuration
 
@@ -90,9 +96,15 @@ Build the mod:
 
 The mod targets `Minecraft 1.21.1 -> 1.21.5` with `NeoForge 21.1.220 -> 21.5.x`.
 
-## Current Version
+### JEI
 
-- `1.2`
+`JEI` is **not required** for the mod to work.
+
+If installed on the client, it additionally displays the mod-specific progression steps:
+- capturing a trace with a glass bottle;
+- alembic recipes;
+- cauldron resting and residue harvest;
+- the Collector entry activation ritual.
 
 ## Author
 
@@ -100,5 +112,5 @@ The mod targets `Minecraft 1.21.1 -> 1.21.5` with `NeoForge 21.1.220 -> 21.5.x`.
 
 ## License
 
-This project is licensed under **All Rights Reserved**.  
+This project is licensed under **MIT**.  
 See [LICENSE](LICENSE).
