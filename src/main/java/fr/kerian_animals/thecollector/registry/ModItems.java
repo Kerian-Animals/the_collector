@@ -3,6 +3,8 @@ package fr.kerian_animals.thecollector.registry;
 import fr.kerian_animals.thecollector.TheCollectorMod;
 import fr.kerian_animals.thecollector.item.CollectorCatalystItem;
 import fr.kerian_animals.thecollector.item.CollectorCompassItem;
+import fr.kerian_animals.thecollector.item.HintBlockItem;
+import fr.kerian_animals.thecollector.item.HintItem;
 import fr.kerian_animals.thecollector.item.ResonanceItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -45,37 +47,71 @@ public final class ModItems {
 
     public static final DeferredHolder<Item, Item> ALEMBIC = ITEMS.register(
             "alembic",
-            () -> new BlockItem(ModBlocks.ALEMBIC.get(), new Item.Properties())
+            () -> new HintBlockItem(
+                    ModBlocks.ALEMBIC.get(),
+                    new Item.Properties(),
+                    "item.the_collector.alembic.lore",
+                    "item.the_collector.alembic.hint"
+            )
     );
 
     public static final DeferredHolder<Item, Item> UNSTABLE_RESONANCE = ITEMS.register(
             "unstable_resonance",
-            () -> new ResonanceItem(new Item.Properties().stacksTo(1), "item.the_collector.unstable_resonance.lore", true)
+            () -> new ResonanceItem(
+                    new Item.Properties().stacksTo(1),
+                    "item.the_collector.unstable_resonance.lore",
+                    "item.the_collector.unstable_resonance.hint",
+                    true
+            )
     );
 
     public static final DeferredHolder<Item, Item> RESONANT_RESIDUE = ITEMS.register(
             "resonant_residue",
-            () -> new ResonanceItem(new Item.Properties().stacksTo(16), "item.the_collector.resonant_residue.lore", true)
+            () -> new ResonanceItem(
+                    new Item.Properties().stacksTo(16),
+                    "item.the_collector.resonant_residue.lore",
+                    "item.the_collector.resonant_residue.hint",
+                    true
+            )
     );
 
     public static final DeferredHolder<Item, Item> DISTILLED_RESONANCE = ITEMS.register(
             "distilled_resonance",
-            () -> new ResonanceItem(new Item.Properties().stacksTo(1), "item.the_collector.distilled_resonance.lore", true)
+            () -> new ResonanceItem(
+                    new Item.Properties().stacksTo(1),
+                    "item.the_collector.distilled_resonance.lore",
+                    "item.the_collector.distilled_resonance.hint",
+                    true
+            )
     );
 
     public static final DeferredHolder<Item, Item> ATTUNED_RESONANCE = ITEMS.register(
             "attuned_resonance",
-            () -> new ResonanceItem(new Item.Properties().stacksTo(16), "item.the_collector.attuned_resonance.lore", true)
+            () -> new ResonanceItem(
+                    new Item.Properties().stacksTo(16),
+                    "item.the_collector.attuned_resonance.lore",
+                    "item.the_collector.attuned_resonance.hint",
+                    true
+            )
     );
 
     public static final DeferredHolder<Item, Item> RESONANCE_CRYSTAL = ITEMS.register(
             "resonance_crystal",
-            () -> new ResonanceItem(new Item.Properties(), "item.the_collector.resonance_crystal.lore", false)
+            () -> new ResonanceItem(
+                    new Item.Properties(),
+                    "item.the_collector.resonance_crystal.lore",
+                    "item.the_collector.resonance_crystal.hint",
+                    false
+            )
     );
 
     public static final DeferredHolder<Item, Item> RESONANCE_LADLE = ITEMS.register(
             "resonance_ladle",
-            () -> new Item(new Item.Properties().durability(64).stacksTo(1))
+            () -> new HintItem(
+                    new Item.Properties().durability(64).stacksTo(1),
+                    "item.the_collector.resonance_ladle.lore",
+                    "item.the_collector.resonance_ladle.hint"
+            )
     );
 
     private ModItems() {

@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:what_remains",
+  "display": {
+    "icon": {
+      "id": "the_collector:attuned_resonance"
+    },
+    "title": {
+      "translate": "advancements.the_collector.dimensional_attunement.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.dimensional_attunement.description"
+    },
+    "x": 7.0,
+    "y": 0.5,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

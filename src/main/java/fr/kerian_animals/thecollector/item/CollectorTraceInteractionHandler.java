@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.item;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.registry.ModBlocks;
 import fr.kerian_animals.thecollector.registry.ModItems;
 import fr.kerian_animals.thecollector.world.ResonanceCauldronSavedData;
@@ -8,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ItemInteractionResult;
@@ -76,6 +78,11 @@ public final class CollectorTraceInteractionHandler {
         level.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, 5, 0.15D, 0.04D, 0.15D, 0.003D);
         level.sendParticles(ParticleTypes.SOUL, pos.getX() + 0.5D, pos.getY() + 0.12D, pos.getZ() + 0.5D, 8, 0.2D, 0.05D, 0.2D, 0.0D);
         level.playSound(null, pos, SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.BLOCKS, 0.8F, 1.15F);
+        if (player instanceof ServerPlayer serverPlayer) {
+            CollectorAdvancementHelper.award(serverPlayer, "bottled_disturbance");
+            serverPlayer.sendSystemMessage(Component.translatable("hint.the_collector.bottled_disturbance")
+                    .withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 
     private static void pourIntoCauldron(UseItemOnBlockEvent event, ServerLevel level, ItemStack heldStack) {
@@ -96,6 +103,11 @@ public final class CollectorTraceInteractionHandler {
 
         level.sendParticles(ParticleTypes.SOUL, pos.getX() + 0.5D, pos.getY() + 0.9D, pos.getZ() + 0.5D, 12, 0.2D, 0.12D, 0.2D, 0.0D);
         level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.8F, 0.9F);
+        if (player instanceof ServerPlayer serverPlayer) {
+            CollectorAdvancementHelper.award(serverPlayer, "patient_crystallization");
+            serverPlayer.sendSystemMessage(Component.translatable("hint.the_collector.patient_crystallization")
+                    .withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 
     private static void harvestResidue(UseItemOnBlockEvent event, ServerLevel level, ItemStack heldStack) {
@@ -141,5 +153,10 @@ public final class CollectorTraceInteractionHandler {
         level.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5D, pos.getY() + 0.95D, pos.getZ() + 0.5D, 10, 0.18D, 0.1D, 0.18D, 0.0D);
         level.sendParticles(ParticleTypes.SOUL, pos.getX() + 0.5D, pos.getY() + 0.95D, pos.getZ() + 0.5D, 16, 0.18D, 0.1D, 0.18D, 0.0D);
         level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.7F, 1.35F);
+        if (player instanceof ServerPlayer serverPlayer) {
+            CollectorAdvancementHelper.award(serverPlayer, "what_remains");
+            serverPlayer.sendSystemMessage(Component.translatable("hint.the_collector.what_remains")
+                    .withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 }

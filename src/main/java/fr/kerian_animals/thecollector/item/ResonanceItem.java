@@ -15,17 +15,26 @@ import java.util.List;
 
 public class ResonanceItem extends Item {
     private final String loreKey;
+    private final String hintKey;
     private final boolean emitsParticles;
 
     public ResonanceItem(Properties properties, String loreKey, boolean emitsParticles) {
+        this(properties, loreKey, null, emitsParticles);
+    }
+
+    public ResonanceItem(Properties properties, String loreKey, String hintKey, boolean emitsParticles) {
         super(properties);
         this.loreKey = loreKey;
+        this.hintKey = hintKey;
         this.emitsParticles = emitsParticles;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable(loreKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        if (hintKey != null) {
+            tooltipComponents.add(Component.translatable(hintKey).withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 
     @Override
