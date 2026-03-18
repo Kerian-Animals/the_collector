@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:shaped",
+  "pattern": [
+    "ACA",
+    "CRC",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "R": {
+      "item": "the_collector:resonance_crystal"
+    }
+  },
+  "result": {
+    "id": "the_collector:collector_compass",
+    "count": 1
+  }
+}

@@ -1,6 +1,7 @@
 package fr.kerian_animals.thecollector.registry;
 
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import fr.kerian_animals.thecollector.block.AlembicBlock;
 import fr.kerian_animals.thecollector.block.CollectorTraceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -22,6 +23,15 @@ public final class ModBlocks {
                     .replaceable()
                     .noCollission()
                     .ignitedByLava())
+    );
+
+    public static final DeferredBlock<Block> ALEMBIC = BLOCKS.register(
+            "alembic",
+            () -> new AlembicBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.5F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion())
     );
 
     private ModBlocks() {

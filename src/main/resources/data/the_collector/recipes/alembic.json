@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:shaped",
+  "pattern": [
+    " G ",
+    "CBC",
+    " C "
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass_bottle"
+    },
+    "B": {
+      "item": "minecraft:brewing_stand"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "the_collector:alembic",
+    "count": 1
+  }
+}
