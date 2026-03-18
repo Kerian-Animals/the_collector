@@ -38,6 +38,27 @@ public final class CollectorAdvancementManager {
         if (isNearTrace(player.blockPosition(), player)) {
             CollectorAdvancementHelper.award(player, "a_strange_trace");
         }
+        if (hasItem(player, ModItems.UNSTABLE_RESONANCE.get())) {
+            CollectorAdvancementHelper.award(player, "bottled_disturbance");
+        }
+        if (hasItem(player, ModItems.ALEMBIC.get()) || hasItem(player, ModItems.DISTILLED_RESONANCE.get())) {
+            CollectorAdvancementHelper.award(player, "delicate_distillation");
+        }
+        if (hasItem(player, ModItems.DISTILLED_RESONANCE.get())) {
+            CollectorAdvancementHelper.award(player, "refined_vibrations");
+        }
+        if (hasItem(player, ModItems.RESONANT_RESIDUE.get())) {
+            CollectorAdvancementHelper.award(player, "what_remains");
+        }
+        if (hasItem(player, ModItems.ATTUNED_RESONANCE.get())) {
+            CollectorAdvancementHelper.award(player, "dimensional_attunement");
+        }
+        if (hasItem(player, ModItems.RESONANCE_CRYSTAL.get())) {
+            CollectorAdvancementHelper.award(player, "focus_the_signal");
+        }
+        if (hasItem(player, ModItems.COLLECTOR_COMPASS.get())) {
+            CollectorAdvancementHelper.award(player, "collector_compass");
+        }
         if (player.serverLevel().dimension() == ModDimensions.COLLECTOR_REALM
                 && player.blockPosition().distManhattan(CollectorVaultManager.VAULT_CENTER) <= 4) {
             CollectorAdvancementHelper.award(player, "the_collectors_domain");

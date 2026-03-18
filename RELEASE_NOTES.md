@@ -1,108 +1,23 @@
-## [1.1.4] - 2026-03-17
+## [1.2.0] - 2026-03-18
 
 ### Français
 
 #### Ajouté
 
-- Ajout d'un arbre complet d'advancements pour la progression du Collectionneur, avec objectifs cachés et nouvelles descriptions immersives.
-- Ajout des traductions associées pour les advancements en anglais et en français.
-- Ajout d'un comportement chaotique pour la Boussole du Collectionneur à moins de 10 blocs de sa cible afin de signaler l'arrivée au lieu exact.
-
-#### Corrigé
-
-- Correction du modèle de la Boussole du Collectionneur pour utiliser les bonnes frames vanilla du compass.
+- Ajout d'une progression complète autour de la résonance du Collector menant jusqu'à la création du `Collector Compass`.
+- Ajout d'un arbre d'advancements dédié à cette progression, de `A Strange Trace` à `Collector Compass`.
 
 #### Modifié
 
-- Les entrées du Collectionneur connues mais absentes dans le monde sont désormais reconstruites automatiquement.
-- La génération des structures du Collectionneur privilégie maintenant des espaces déjà ouverts en surface ou en grotte, au lieu d'apparaître enfermée dans des blocs.
+- L'obtention du `Collector Compass` n'est plus un craft direct: elle passe maintenant par une chaîne alchimique complète.
 
 ### English
 
 #### Added
 
-- Added a full Collector advancement tree with hidden goals and new atmospheric descriptions.
-- Added the related advancement translations in English and French.
-- Added a chaotic behavior for the Collector Compass within 10 blocks of its target to signal arrival at the exact location.
-
-#### Fixed
-
-- Fixed the Collector Compass item model to use the proper vanilla compass frame sequence.
+- Added a full Collector resonance progression that now leads step by step to the `Collector Compass`.
+- Added a dedicated advancement chain for that progression, from `A Strange Trace` to `Collector Compass`.
 
 #### Changed
 
-- Collector entries that are known but missing from the world are now rebuilt automatically.
-- Collector structure generation now prefers already open spaces on the surface or in caves instead of appearing buried inside blocks.
-
-## [1.1.3] - 2026-03-17
-
-### Français
-
-#### Ajouté
-
-- Ajout de traces du Collectionneur au sol après ses vols pour guider approximativement le joueur vers le lieu du rituel.
-- Ajout du bloc visuel animé `collector_trace` utilisé pour matérialiser ces résidus en jeu.
-
-#### Corrigé
-
-- Correction de la Boussole du Collectionneur: elle met maintenant à jour sa direction visuelle en pointant correctement vers la cache ou l'entrée la plus proche.
-
-### English
-
-#### Added
-
-- Added Collector ground traces after thefts to guide players approximately toward the ritual site.
-- Added the animated `collector_trace` visual block used to materialize those residues in game.
-
-#### Fixed
-
-- Fixed the Collector Compass so its visual needle now updates correctly toward the stash or nearest entry.
-
-## [1.1.2] - 2026-03-17
-
-### Français
-
-#### Ajouté
-
-- Ajout de mini-caches du Collectionneur générées dans l'Overworld sous forme de petites structures improvisées.
-- Ajout d'un butin dédié pour ces mini-caches avec une faible générosité: fragments, objets volés, pages de lore ou rien.
-- Ajout de nouveaux réglages de configuration pour contrôler la fréquence et la densité de génération des mini-caches.
-
-### English
-
-#### Added
-
-- Added Collector mini-caches generated in the Overworld as small improvised structures.
-- Added dedicated loot for those mini-caches with intentionally restrained rewards: fragments, stolen objects, lore pages, or nothing.
-- Added new configuration settings to control mini-cache generation frequency and density.
-
-## [1.1.1] - 2026-03-17
-
-### Français
-
-#### Modifié
-
-- Ajustement des conditions d'obtention d'un des fragments de relique pour rendre sa récupération plus accessible.
-
-### English
-
-#### Changed
-
-- Adjusted the acquisition conditions for one of the relic fragments to make it more accessible.
-
-
-## [1.1.1] - 2026-03-17
-
-### Français
-
-#### Modifié
-
-- Ajustement des conditions d'obtention d'un des fragments de relique pour rendre sa récupération plus accessible.
-- Ajout d'une seconde condition d'obtention pour permettre de récupérer ce fragment plus facilement selon la progression du joueur.
-
-### English
-
-#### Changed
-
-- Adjusted the acquisition conditions for one of the relic fragments to make it more accessible.
-- Added a second acquisition condition so this fragment can be obtained more easily depending on player progression.
+- The `Collector Compass` is no longer a direct craft and now requires a full alchemical progression.

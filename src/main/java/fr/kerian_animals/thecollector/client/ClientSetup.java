@@ -1,8 +1,13 @@
 package fr.kerian_animals.thecollector.client;
 
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import fr.kerian_animals.thecollector.registry.ModMenus;
 import fr.kerian_animals.thecollector.registry.ModEntities;
+import fr.kerian_animals.thecollector.registry.ModBlocks;
 import fr.kerian_animals.thecollector.registry.ModItems;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -29,8 +34,15 @@ public final class ClientSetup {
     }
 
     @SubscribeEvent
+    public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
+        event.register(ModMenus.ALEMBIC.get(), AlembicScreen::new);
+    }
+
+    @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ALEMBIC.get(), RenderType.cutout());
+
             CompassItemPropertyFunction vanillaFunction = new CompassItemPropertyFunction((level, stack, entity) -> {
                 LodestoneTracker tracker = stack.get(DataComponents.LODESTONE_TRACKER);
                 return tracker != null ? tracker.target().orElse(null) : null;

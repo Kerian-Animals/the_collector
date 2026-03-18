@@ -22,6 +22,13 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.COLLECTOR_COMPASS.get());
                         output.accept(ModItems.COLLECTOR_CATALYST.get());
                         output.accept(ModItems.COLLECTOR_TRACE.get());
+                        output.accept(ModItems.ALEMBIC.get());
+                        output.accept(ModItems.UNSTABLE_RESONANCE.get());
+                        output.accept(ModItems.RESONANT_RESIDUE.get());
+                        output.accept(ModItems.DISTILLED_RESONANCE.get());
+                        output.accept(ModItems.ATTUNED_RESONANCE.get());
+                        output.accept(ModItems.RESONANCE_CRYSTAL.get());
+                        output.accept(ModItems.RESONANCE_LADLE.get());
                         output.accept(ModItems.NETHER_RELIC_FRAGMENT.get());
                         output.accept(ModItems.CAVERN_RELIC_FRAGMENT.get());
                         output.accept(ModItems.ECHO_RELIC_FRAGMENT.get());
