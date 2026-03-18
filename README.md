@@ -55,6 +55,12 @@ Le mod mélange :
 - Tooltips de lore et d'indices sur les objets liés à la résonance
 - Feedback contextuel pendant les étapes d'expérimentation
 - GUI d'alambic calqué sur le brewing stand vanilla
+- Intégration **JEI** optionnelle pour visualiser :
+- les crafts vanilla du mod ;
+- la capture de `Unstable Resonance` ;
+- la distillation à l'alambic ;
+- la cristallisation en chaudron ;
+- le rituel d'activation d'entrée du Collector.
 
 ## Configuration
 
@@ -90,9 +96,15 @@ Compiler le mod :
 
 Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.1.220 -> 21.5.x`.
 
-## Version actuelle
+### JEI
 
-- `1.2`
+`JEI` n'est **pas requis** pour faire fonctionner le mod.
+
+S'il est installé côté joueur, il affiche en plus les étapes de progression spécifiques du mod :
+- capture d'une trace avec une fiole ;
+- recettes d'alambic ;
+- repos en chaudron et récolte du résidu ;
+- rituel d'activation de l'entrée du Collector.
 
 ## Auteur
 
@@ -100,5 +112,5 @@ Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.1.220 -> 21.5.x`.
 
 ## Licence
 
-Ce projet est sous licence **All Rights Reserved**.  
+Ce projet est sous licence **MIT**.  
 Voir [LICENSE](LICENSE).

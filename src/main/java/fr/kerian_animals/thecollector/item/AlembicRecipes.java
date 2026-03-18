@@ -5,6 +5,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
+
 public final class AlembicRecipes {
     private static final AlembicRecipe[] RECIPES = new AlembicRecipe[] {
             new AlembicRecipe(ModItems.UNSTABLE_RESONANCE.get(), Items.ECHO_SHARD, Items.BLAZE_POWDER, ModItems.DISTILLED_RESONANCE.get(), 20 * 15),
@@ -12,6 +14,10 @@ public final class AlembicRecipes {
     };
 
     private AlembicRecipes() {
+    }
+
+    public static List<AlembicRecipe> all() {
+        return List.of(RECIPES);
     }
 
     public static AlembicRecipe find(ItemStack input, ItemStack reagent, ItemStack fuel) {
