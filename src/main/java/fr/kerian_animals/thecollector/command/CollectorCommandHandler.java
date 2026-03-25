@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Registers administrative and discovery commands for Collector stashes and entry structures.
  */
-@EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class CollectorCommandHandler {
     private CollectorCommandHandler() {
     }

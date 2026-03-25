@@ -26,7 +26,7 @@ public final class ModEntities {
     private ModEntities() {
     }
 
-    @EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
     public static final class ModEvents {
         private ModEvents() {
         }

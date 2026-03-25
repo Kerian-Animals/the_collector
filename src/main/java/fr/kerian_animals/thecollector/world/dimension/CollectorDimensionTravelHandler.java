@@ -19,10 +19,13 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Optional;
 
-@EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class CollectorDimensionTravelHandler {
     private static final String TAG_TRAVEL_COOLDOWN = "the_collector_travel_cooldown";
+    private static final String TAG_TRAVEL_CHECK_DELAY = "the_collector_travel_check_delay";
     private static final String TAG_LAST_ENTRY_POS = "the_collector_last_entry_pos";
+    private static final int TRAVEL_COOLDOWN_TICKS = 20;
+    private static final int CROUCH_CHECK_INTERVAL_TICKS = 8;
 
     private CollectorDimensionTravelHandler() {
     }
@@ -32,15 +35,28 @@ public final class CollectorDimensionTravelHandler {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        if (player.serverLevel().isClientSide || !player.isCrouching()) {
+        if (player.serverLevel().isClientSide) {
             return;
         }
 
         int cooldown = player.getPersistentData().getInt(TAG_TRAVEL_COOLDOWN);
         if (cooldown > 0) {
             player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, cooldown - 1);
+        }
+
+        int checkDelay = player.getPersistentData().getInt(TAG_TRAVEL_CHECK_DELAY);
+        if (checkDelay > 0) {
+            player.getPersistentData().putInt(TAG_TRAVEL_CHECK_DELAY, checkDelay - 1);
+        }
+
+        if (!player.isCrouching() || cooldown > 0) {
             return;
         }
+
+        if (player.getPersistentData().getInt(TAG_TRAVEL_CHECK_DELAY) > 0) {
+            return;
+        }
+        player.getPersistentData().putInt(TAG_TRAVEL_CHECK_DELAY, CROUCH_CHECK_INTERVAL_TICKS);
 
         if (player.serverLevel().dimension() == Level.OVERWORLD) {
             tryEnterCollectorRealm(player);
@@ -72,7 +88,7 @@ public final class CollectorDimensionTravelHandler {
         CollectorVaultManager.ensureVaultBuilt(realm);
         prepareSafeStand(realm, CollectorVaultManager.VAULT_ENTRY_PAD);
         player.getPersistentData().putLong(TAG_LAST_ENTRY_POS, nearest.get().pos().asLong());
-        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, 20);
+        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, TRAVEL_COOLDOWN_TICKS);
         player.changeDimension(new DimensionTransition(
                 realm,
                 new Vec3(
@@ -114,7 +130,7 @@ public final class CollectorDimensionTravelHandler {
         }
 
         prepareSafeStand(overworld, target.get().pos());
-        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, 20);
+        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, TRAVEL_COOLDOWN_TICKS);
         player.changeDimension(new DimensionTransition(
                 overworld,
                 new Vec3(target.get().pos().getX() + 0.5D, target.get().pos().getY() + 1.0D, target.get().pos().getZ() + 0.5D),
