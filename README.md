@@ -110,6 +110,11 @@ Quelques points d'entrée utiles pour reprendre le code :
 
 ## Développement
 
+Guide développeur détaillé :
+
+- [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
+- Version anglaise : [docs/DEVELOPER_GUIDE.en.md](docs/DEVELOPER_GUIDE.en.md)
+
 Lancer le client de dev :
 
 ```powershell

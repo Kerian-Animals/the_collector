@@ -19,6 +19,13 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Optional;
 
+/**
+ * Handles crouch-based travel between the Overworld entry structure and the Collector realm.
+ *
+ * <p>The checks are intentionally throttled because they run on player tick. Travel state is
+ * stored in player persistent data so cooldowns survive handler re-instantiation and so return
+ * travel can remember the entry used by the player.</p>
+ */
 @EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class CollectorDimensionTravelHandler {
     private static final String TAG_TRAVEL_COOLDOWN = "the_collector_travel_cooldown";
@@ -65,6 +72,9 @@ public final class CollectorDimensionTravelHandler {
         }
     }
 
+    /**
+     * Attempts to enter the Collector realm when the player crouches on an activated entry.
+     */
     private static void tryEnterCollectorRealm(ServerPlayer player) {
         ServerLevel overworld = player.serverLevel();
         Optional<CollectorEntry> nearest = CollectorSavedData.get(overworld).getNearestEntry(player.blockPosition());
@@ -106,6 +116,9 @@ public final class CollectorDimensionTravelHandler {
         player.sendSystemMessage(Component.translatable("dimension.the_collector.entered"));
     }
 
+    /**
+     * Attempts to send the player back to the last known Overworld entry from the realm pad.
+     */
     private static void tryReturnToOverworld(ServerPlayer player) {
         if (player.blockPosition().distManhattan(CollectorVaultManager.VAULT_ENTRY_PAD) > 1) {
             return;
@@ -143,6 +156,9 @@ public final class CollectorDimensionTravelHandler {
         player.sendSystemMessage(Component.translatable("dimension.the_collector.left"));
     }
 
+    /**
+     * Guarantees a safe standable location before the dimension transition is executed.
+     */
     private static void prepareSafeStand(ServerLevel level, net.minecraft.core.BlockPos pos) {
         if (level.getBlockState(pos).canBeReplaced()) {
             level.setBlock(pos, Blocks.POLISHED_DEEPSLATE.defaultBlockState(), 3);

@@ -110,6 +110,10 @@ Useful entry points when navigating the codebase:
 
 ## Development
 
+Detailed developer guide:
+
+- [docs/DEVELOPER_GUIDE.en.md](docs/DEVELOPER_GUIDE.en.md)
+
 Run the dev client:
 
 ```powershell

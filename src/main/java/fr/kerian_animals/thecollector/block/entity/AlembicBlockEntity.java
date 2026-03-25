@@ -24,6 +24,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
+/**
+ * Block entity backing the alembic processing station.
+ *
+ * <p>The implementation mirrors part of the vanilla brewing stand contract so the menu and screen
+ * can reuse familiar progress semantics while still running custom recipes and fuel rules.</p>
+ */
 public final class AlembicBlockEntity extends BlockEntity implements MenuProvider, Container {
     public static final int BOTTLE_SLOT_LEFT = 0;
     public static final int BOTTLE_SLOT_CENTER = 1;
@@ -60,6 +66,9 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         super(ModBlockEntities.ALEMBIC.get(), pos, blockState);
     }
 
+    /**
+     * Server tick for recipe resolution, fuel consumption, crafting, and visual feedback.
+     */
     public static void tick(Level level, BlockPos pos, BlockState state, AlembicBlockEntity alembic) {
         if (level.isClientSide) {
             return;
@@ -102,6 +111,9 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         setChanged(level, pos, state);
     }
 
+    /**
+     * Resolves the active recipe from the bottle slots using the current reagent and fuel state.
+     */
     private fr.kerian_animals.thecollector.item.AlembicRecipes.AlembicRecipe findActiveRecipe() {
         ItemStack reagent = items.getStackInSlot(REAGENT_SLOT);
         ItemStack fuel = items.getStackInSlot(FUEL_SLOT);
@@ -128,6 +140,9 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         );
     }
 
+    /**
+     * Consumes inputs for the current recipe and transforms every compatible bottle slot.
+     */
     private void craft(fr.kerian_animals.thecollector.item.AlembicRecipes.AlembicRecipe recipe) {
         items.extractItem(REAGENT_SLOT, 1, false);
         if (fuelCharges > 0) {
@@ -146,6 +161,9 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         }
     }
 
+    /**
+     * Updates the exposed menu data so the client can render brewing-style progress and fuel.
+     */
     private void syncData() {
         int remaining = maxProgress > 0 ? Math.max(0, maxProgress - progress) : 0;
         int vanillaRemaining = 0;
@@ -156,6 +174,9 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         data.set(1, fuelCharges);
     }
 
+    /**
+     * Emits low-frequency particles and sounds while a recipe is in progress.
+     */
     private void emitActivity(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel serverLevel) || progress <= 0) {
             return;
@@ -202,6 +223,10 @@ public final class AlembicBlockEntity extends BlockEntity implements MenuProvide
         return new AlembicMenu(containerId, inventory, this, getData());
     }
 
+    /**
+     * Mirrors inventory occupancy into the blockstate to drive bottle rendering on the block
+     * model.
+     */
     private void updateBottleState() {
         if (level == null) {
             return;

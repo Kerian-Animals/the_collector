@@ -15,6 +15,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Persistent world data for Collector-related progression structures.
+ *
+ * <p>The mod stores this data in the Overworld data storage even when the referenced content lives
+ * in another dimension. That keeps stashes, entries, mini-caches, and per-player stash pointers
+ * under a single source of truth.</p>
+ */
 public class CollectorSavedData extends SavedData {
     public static final String DATA_NAME = "the_collector_stashes";
 
@@ -23,6 +30,9 @@ public class CollectorSavedData extends SavedData {
     private final Map<UUID, CollectorEntry> entries = new HashMap<>();
     private final Map<UUID, CollectorMiniCache> miniCaches = new HashMap<>();
 
+    /**
+     * Returns the shared Collector saved data instance anchored in the Overworld.
+     */
     public static CollectorSavedData get(ServerLevel level) {
         ServerLevel overworld = level.getServer().overworld();
         return overworld.getDataStorage().computeIfAbsent(
@@ -31,6 +41,9 @@ public class CollectorSavedData extends SavedData {
         );
     }
 
+    /**
+     * Deserializes all Collector-related persistent state from disk.
+     */
     public static CollectorSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         CollectorSavedData data = new CollectorSavedData();
 
@@ -91,11 +104,17 @@ public class CollectorSavedData extends SavedData {
         return tag;
     }
 
+    /**
+     * Records a newly created stash and marks the saved data dirty.
+     */
     public void addStash(CollectorStash stash) {
         this.stashes.put(stash.id(), stash);
         setDirty();
     }
 
+    /**
+     * Updates the last stash pointer associated with a player.
+     */
     public void setLastStashForPlayer(UUID playerId, UUID stashId) {
         this.playerLastStash.put(playerId, stashId);
         setDirty();

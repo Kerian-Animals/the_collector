@@ -16,6 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Server-side spawn scheduler for the Collector.
+ *
+ * <p>The handler performs a lightweight periodic check in the Overworld, selects a non-spectator
+ * player as anchor, and tries to spawn a Collector in a configurable distance ring around that
+ * player. The cooldown is kept per {@link ServerLevel} to avoid spawn bursts.</p>
+ */
 public class CollectorSpawnHandler {
     private final Map<ServerLevel, Long> lastSpawnByLevel = new HashMap<>();
 
@@ -74,6 +81,12 @@ public class CollectorSpawnHandler {
         }
     }
 
+    /**
+     * Searches a handful of positions around the chosen player and returns the first viable one.
+     *
+     * <p>The search is intentionally shallow because this method runs inside the global spawn
+     * loop. It trades perfect placement for bounded server cost.</p>
+     */
     private BlockPos findSpawnPos(ServerLevel level, BlockPos playerPos) {
         int minDistance = TheCollectorConfig.SPAWN_MIN_DISTANCE.get();
         int maxDistance = Math.max(minDistance, TheCollectorConfig.SPAWN_MAX_DISTANCE.get());

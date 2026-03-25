@@ -20,6 +20,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 
+/**
+ * Centralizes the custom item-on-block interactions used by the resonance progression.
+ *
+ * <p>This handler covers three steps: collecting a trace with a glass bottle, pouring distilled
+ * resonance into a cauldron, and harvesting residue with the ladle once the resting timer is
+ * complete.</p>
+ */
 public final class CollectorTraceInteractionHandler {
     @SubscribeEvent
     public void onUseItemOnBlock(UseItemOnBlockEvent event) {
@@ -47,6 +54,9 @@ public final class CollectorTraceInteractionHandler {
         }
     }
 
+    /**
+     * Converts a Collector trace block into unstable resonance and grants the corresponding hint.
+     */
     private static void collectTrace(UseItemOnBlockEvent event, ItemStack heldStack) {
         event.cancelWithResult(ItemInteractionResult.SUCCESS);
 
@@ -85,6 +95,9 @@ public final class CollectorTraceInteractionHandler {
         }
     }
 
+    /**
+     * Starts the cauldron resting phase used before residue can be harvested.
+     */
     private static void pourIntoCauldron(UseItemOnBlockEvent event, ServerLevel level, ItemStack heldStack) {
         ResonanceCauldronSavedData data = ResonanceCauldronSavedData.get(level);
         BlockPos pos = event.getPos();
@@ -110,6 +123,9 @@ public final class CollectorTraceInteractionHandler {
         }
     }
 
+    /**
+     * Finishes the cauldron loop by consuming the resting state and producing resonant residue.
+     */
     private static void harvestResidue(UseItemOnBlockEvent event, ServerLevel level, ItemStack heldStack) {
         ResonanceCauldronSavedData data = ResonanceCauldronSavedData.get(level);
         BlockPos pos = event.getPos();

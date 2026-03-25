@@ -11,6 +11,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+/**
+ * Evaluates gameplay-driven advancements that are easier to infer in code than through pure JSON
+ * triggers.
+ *
+ * <p>The manager runs on a coarse tick cadence and avoids repeated expensive checks by caching
+ * already-awarded advancements and scanning the inventory only once when several item-based
+ * conditions are still pending.</p>
+ */
 public final class CollectorAdvancementManager {
     public CollectorAdvancementManager() {
     }
@@ -84,6 +92,9 @@ public final class CollectorAdvancementManager {
         }
     }
 
+    /**
+     * Performs a single inventory pass and records which progression items are currently present.
+     */
     private static InventorySignals scanInventory(ServerPlayer player) {
         InventorySignals signals = new InventorySignals();
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
@@ -122,6 +133,9 @@ public final class CollectorAdvancementManager {
         return signals;
     }
 
+    /**
+     * Checks a compact area around the player for nearby Collector traces.
+     */
     private static boolean isNearTrace(BlockPos center, ServerPlayer player) {
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-2, -1, -2), center.offset(2, 1, 2))) {
             if (player.serverLevel().getBlockState(pos).is(ModBlocks.COLLECTOR_TRACE.get())) {
@@ -131,6 +145,9 @@ public final class CollectorAdvancementManager {
         return false;
     }
 
+    /**
+     * Aggregated inventory flags used to avoid repeated {@code Inventory.contains(...)} scans.
+     */
     private static final class InventorySignals {
         private static final InventorySignals EMPTY = new InventorySignals();
 
