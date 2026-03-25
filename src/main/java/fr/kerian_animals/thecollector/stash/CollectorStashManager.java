@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Builds and records persistent Collector stashes after a successful escape or despawn.
+ */
 public final class CollectorStashManager {
     private CollectorStashManager() {
     }

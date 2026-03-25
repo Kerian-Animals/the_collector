@@ -2,6 +2,9 @@ package fr.kerian_animals.thecollector.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+/**
+ * Defines the shared server-side configuration for spawn rules, theft limits, and world features.
+ */
 public final class TheCollectorConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 

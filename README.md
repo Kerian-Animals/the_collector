@@ -3,84 +3,114 @@
 README par défaut : **français**.  
 Version anglaise : [README.en.md](README.en.md).
 
-## Présentation
+## Aperçu
 
-**The Collector** est un mod NeoForge pour Minecraft 1.21.x centré sur une créature furtive qui vole les objets de valeur, les fait disparaître, puis laisse derrière elle des traces que le joueur peut apprendre à exploiter.
+**The Collector** est un mod **NeoForge** pour **Minecraft 1.21.x** centré sur une créature rare qui observe, vole, fuit, puis laisse derrière elle des indices exploitables.
 
-Le mod mélange :
-- chasse à une entité rare ;
-- investigation environnementale ;
-- progression alchimique ;
-- exploration de caches et d'entrées dimensionnelles.
+Le projet mélange quatre axes de jeu :
 
-## Boucle de jeu
+- chasse à une entité furtive ;
+- lecture du terrain et investigation ;
+- progression alchimique autour de la résonance ;
+- exploration de caches, ruines et accès dimensionnels.
 
-1. Le `Collector` apparaît rarement en Overworld.
-2. Il vole certains objets au sol ou dans les coffres, puis s'échappe.
-3. Il laisse des `Collector Trace` dans le monde.
-4. Le joueur découvre peu à peu comment exploiter cette résonance instable.
-5. Cette expérimentation finit par ouvrir l'accès à des outils de traque plus avancés.
-6. L'enquête mène ensuite vers les caches, les entrées et les lieux liés au Collector.
+## Boucle de progression
 
-## Fonctionnalités actuelles
+1. Le `Collector` apparaît ponctuellement dans l'Overworld.
+2. Il repère des objets de valeur au sol ou dans des coffres.
+3. Après un vol, il s'échappe et sème des `Collector Trace`.
+4. Le joueur apprend à capturer, distiller et stabiliser cette résonance.
+5. Cette progression débloque de nouveaux outils de traque.
+6. L'enquête mène vers des caches, des entrées rituelles et le royaume du Collector.
 
-### Le Collector
+## Contenu du mod
 
-- Entité `The Collector`
-- Spawn rare en Overworld
-- IA à états (`IDLE`, `SCOUTING`, `COLLECTING`, `ESCAPING`, `DESPAWNING`)
-- Vol d'objets au sol
-- Vol d'objets de valeur dans les coffres
-- Inventaire interne limité
-- Fuite, disparition et génération de cache persistante
+### Entité et comportements
+
+- entité `The Collector` avec IA à états ;
+- vol d'objets au sol ;
+- pillage limité de coffres ;
+- inventaire interne plafonné ;
+- fuite, disparition et conversion du butin en cache persistante.
 
 ### Monde et exploration
 
-- Mini-caches générées en Overworld
-- Fragments de reliques et pages de lore
-- Traces du Collector laissées après ses passages
-- Entrées et royaume du Collector
+- mini-caches générées en Overworld ;
+- traces déposées après les vols ;
+- fragments de reliques et éléments de lore ;
+- structures d'entrée menant au contenu avancé du mod ;
+- royaume du Collector avec dépôt de butin persistant.
 
-### Progression de résonance
+### Résonance et alchimie
 
-- Traces exploitables laissées après le passage du Collector
-- Système d'expérimentation autour d'une résonance instable
-- Alambic dédié et manipulations alchimiques
-- Objets intermédiaires, raffinage et stabilisation
-- Aboutissement vers des outils de détection liés au Collector
+- capture d'une résonance instable depuis les traces ;
+- chaîne de transformation autour de l'alambic ;
+- cristallisation et raffinage ;
+- objets intermédiaires servant à la progression ;
+- outils de localisation liés au Collector.
 
 ### Guidage du joueur
 
-- Arbre d'advancements dédié à la progression du Collector
-- Tooltips de lore et d'indices sur les objets liés à la résonance
-- Feedback contextuel pendant les étapes d'expérimentation
-- GUI d'alambic calqué sur le brewing stand vanilla
-- Intégration **JEI** optionnelle pour visualiser :
-- les crafts vanilla du mod ;
-- la capture de `Unstable Resonance` ;
-- la distillation à l'alambic ;
-- la cristallisation en chaudron ;
-- le rituel d'activation d'entrée du Collector.
+- arbre d'advancements dédié ;
+- messages contextuels et tooltips de progression ;
+- interface d'alambic inspirée du `Brewing Stand` vanilla ;
+- intégration **JEI** optionnelle pour exposer les recettes et étapes spécifiques du mod.
+
+## Commandes
+
+Le mod enregistre deux racines équivalentes :
+
+- `/thecollector`
+- `/collector`
+
+Sous-commandes disponibles :
+
+- `/collector locate latest`
+- `/collector locate nearest`
+- `/collector locate all`
+- `/collector entry locate`
+- `/collector entry create`
 
 ## Configuration
 
 Fichier généré :
+
 - `run/config/the_collector-common.toml`
 
-Exemples de réglages :
+Principaux réglages :
+
+- `enabled`
 - `spawnChancePerCheck`
 - `spawnCooldownTicks`
+- `spawnMinDistance`
+- `spawnMaxDistance`
+- `nightOnlySpawn`
 - `itemSearchRadius`
 - `chestTheftEnabled`
 - `chestSearchRadius`
 - `maxStealsPerChest`
+- `collectorInventorySlots`
 - `maxStolenStacks`
+- `escapeDistance`
+- `maxPresenceTicks`
 - `stashEnabled`
+- `bonusLootEnabled`
 - `miniCacheEnabled`
+
+## Architecture rapide
+
+Quelques points d'entrée utiles pour reprendre le code :
+
+- `TheCollectorMod` : enregistrement du contenu et des handlers NeoForge ;
+- `CollectorEntity` : logique centrale de l'entité et cycle de vie ;
+- `CollectorStashManager` : création et persistance du butin volé ;
+- `CollectorEntryManager` : génération et maintenance des structures d'entrée ;
+- `CollectorCatalystItem` : activation rituelle d'une entrée ;
+- `TheCollectorConfig` : configuration commune du mod.
 
 ## Développement
 
-Lancer le client :
+Lancer le client de dev :
 
 ```powershell
 ./gradlew runClient
@@ -94,17 +124,19 @@ Compiler le mod :
 
 ## Compatibilité
 
-Le mod cible `Minecraft 1.21.1 -> 1.21.5` avec `NeoForge 21.1.220 -> 21.5.x`.
+- `Minecraft 1.21.1 -> 1.21.5`
+- `NeoForge 21.1.220 -> 21.5.x`
 
 ### JEI
 
-`JEI` n'est **pas requis** pour faire fonctionner le mod.
+`JEI` n'est pas requis pour utiliser le mod.
 
-S'il est installé côté joueur, il affiche en plus les étapes de progression spécifiques du mod :
-- capture d'une trace avec une fiole ;
-- recettes d'alambic ;
-- repos en chaudron et récolte du résidu ;
-- rituel d'activation de l'entrée du Collector.
+S'il est installé, il affiche notamment :
+
+- la capture de la résonance ;
+- les recettes d'alambic ;
+- les étapes de cristallisation ;
+- le rituel d'activation des entrées.
 
 ## Auteur
 
@@ -112,5 +144,5 @@ S'il est installé côté joueur, il affiche en plus les étapes de progression 
 
 ## Licence
 
-Ce projet est sous licence **MIT**.  
+Projet distribué sous licence **MIT**.  
 Voir [LICENSE](LICENSE).

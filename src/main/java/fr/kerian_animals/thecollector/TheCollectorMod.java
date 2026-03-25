@@ -19,6 +19,12 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
+/**
+ * Main NeoForge entry point for The Collector.
+ *
+ * <p>This class registers the mod content, common configuration, and the runtime event handlers
+ * that drive spawning, progression, and trace interactions.</p>
+ */
 @Mod(TheCollectorMod.MOD_ID)
 public final class TheCollectorMod {
     public static final String MOD_ID = "the_collector";

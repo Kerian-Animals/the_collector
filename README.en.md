@@ -5,82 +5,112 @@ French version: [README.md](README.md).
 
 ## Overview
 
-**The Collector** is a NeoForge mod for Minecraft 1.21.x built around a stealthy creature that steals valuable items, disappears, and leaves behind traces the player can learn to study.
+**The Collector** is a **NeoForge** mod for **Minecraft 1.21.x** built around a rare creature that scouts, steals, escapes, and leaves behind exploitable clues.
 
-The mod combines:
-- stalking a rare entity
-- environmental investigation
-- alchemical progression
-- stash and dimension-oriented exploration
+The mod combines four gameplay pillars:
 
-## Gameplay Loop
+- hunting a stealthy entity;
+- environmental investigation;
+- alchemical progression built around resonance;
+- exploration of stashes, ruins, and dimensional access points.
 
-1. The `Collector` rarely appears in the Overworld.
-2. It steals selected items from the ground or from chests, then escapes.
-3. It leaves `Collector Trace` blocks behind.
-4. The player gradually learns how to exploit that unstable resonance.
-5. That experimentation eventually unlocks more advanced tracking tools.
-6. The investigation then leads toward stashes, entries, and Collector-related locations.
+## Progression Loop
 
-## Current Features
+1. The `Collector` appears from time to time in the Overworld.
+2. It targets valuable items on the ground or inside chests.
+3. After stealing, it escapes and leaves `Collector Trace` blocks behind.
+4. The player learns how to capture, distill, and stabilize that resonance.
+5. This progression unlocks more reliable tracking tools.
+6. The investigation eventually leads to stashes, ritual entry points, and the Collector realm.
 
-### The Collector
+## Mod Content
 
-- `The Collector` entity
-- Rare Overworld spawn
-- State-driven AI (`IDLE`, `SCOUTING`, `COLLECTING`, `ESCAPING`, `DESPAWNING`)
-- Ground item theft
-- Valuable chest item theft
-- Limited internal inventory
-- Escape, despawn, and persistent stash generation
+### Entity and Behaviors
+
+- `The Collector` entity with a state-driven AI;
+- ground item theft;
+- limited chest stealing;
+- capped internal inventory;
+- escape and despawn flow that turns stolen loot into persistent stashes.
 
 ### World and Exploration
 
-- Overworld mini-caches
-- Relic fragments and lore pages
-- Collector traces left behind after thefts
-- Collector entries and realm access
+- mini-cache generation in the Overworld;
+- residue trails left after theft events;
+- relic fragments and lore items;
+- entry structures tied to late progression;
+- a Collector realm used as a persistent loot destination.
 
-### Resonance Progression
+### Resonance and Alchemy
 
-- Exploitable traces left behind after the Collector passes through
-- An experimentation system built around unstable resonance
-- A dedicated alembic and alchemical handling
-- Intermediate items, refinement, and stabilization
-- An end point that unlocks Collector-oriented detection tools
+- unstable resonance capture from traces;
+- alembic-based processing chain;
+- crystallization and refinement steps;
+- intermediate progression items;
+- tracking tools tied to Collector activity.
 
 ### Player Guidance
 
-- Dedicated Collector advancement chain
-- Lore and hint tooltips on resonance-related items
-- Contextual feedback during the experimentation steps
-- Alembic GUI styled after the vanilla brewing stand
-- Optional **JEI** integration to display:
-- the mod's vanilla crafting recipes;
-- `Unstable Resonance` trace capture;
-- alembic distillation;
-- cauldron crystallization;
-- the Collector entry activation ritual.
+- dedicated advancement tree;
+- contextual feedback and progression tooltips;
+- an alembic GUI modeled after the vanilla `Brewing Stand`;
+- optional **JEI** integration for recipes and progression-specific processes.
+
+## Commands
+
+The mod registers two equivalent roots:
+
+- `/thecollector`
+- `/collector`
+
+Available subcommands:
+
+- `/collector locate latest`
+- `/collector locate nearest`
+- `/collector locate all`
+- `/collector entry locate`
+- `/collector entry create`
 
 ## Configuration
 
-Generated config file:
+Generated file:
+
 - `run/config/the_collector-common.toml`
 
-Main settings include:
+Main settings:
+
+- `enabled`
 - `spawnChancePerCheck`
 - `spawnCooldownTicks`
+- `spawnMinDistance`
+- `spawnMaxDistance`
+- `nightOnlySpawn`
 - `itemSearchRadius`
 - `chestTheftEnabled`
 - `chestSearchRadius`
 - `maxStealsPerChest`
+- `collectorInventorySlots`
 - `maxStolenStacks`
+- `escapeDistance`
+- `maxPresenceTicks`
 - `stashEnabled`
+- `bonusLootEnabled`
 - `miniCacheEnabled`
+
+## Architecture Summary
+
+Useful entry points when navigating the codebase:
+
+- `TheCollectorMod`: content registration and NeoForge event wiring;
+- `CollectorEntity`: core entity lifecycle and behavior;
+- `CollectorStashManager`: stolen loot conversion and persistence;
+- `CollectorEntryManager`: entry generation and structure maintenance;
+- `CollectorCatalystItem`: ritual activation of an entry;
+- `TheCollectorConfig`: shared mod configuration.
 
 ## Development
 
-Run the client:
+Run the dev client:
 
 ```powershell
 ./gradlew runClient
@@ -94,17 +124,19 @@ Build the mod:
 
 ## Compatibility
 
-The mod targets `Minecraft 1.21.1 -> 1.21.5` with `NeoForge 21.1.220 -> 21.5.x`.
+- `Minecraft 1.21.1 -> 1.21.5`
+- `NeoForge 21.1.220 -> 21.5.x`
 
 ### JEI
 
-`JEI` is **not required** for the mod to work.
+`JEI` is not required for the mod to work.
 
-If installed on the client, it additionally displays the mod-specific progression steps:
-- capturing a trace with a glass bottle;
+If installed, it can display:
+
+- resonance capture;
 - alembic recipes;
-- cauldron resting and residue harvest;
-- the Collector entry activation ritual.
+- crystallization steps;
+- entry activation rituals.
 
 ## Author
 

@@ -11,6 +11,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Creates, rebuilds, and locates Overworld entry structures that lead into the Collector content.
+ */
 public final class CollectorEntryManager {
     private CollectorEntryManager() {
     }
@@ -122,7 +125,6 @@ public final class CollectorEntryManager {
         level.setBlock(center, Blocks.LODESTONE.defaultBlockState(), 3);
         level.setBlock(center.above(), Blocks.SOUL_FIRE.defaultBlockState(), 3);
 
-        // Unstable ruins: player must complete the ritual structure to activate the gate.
         level.setBlock(center.offset(2, 0, 0), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
         level.setBlock(center.offset(-2, 0, 0), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
         level.setBlock(center.offset(0, 0, 2), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);

@@ -34,6 +34,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Core entity implementation for The Collector.
+ *
+ * <p>The entity alternates between scouting, stealing, escaping, and despawning. When it leaves
+ * the world it converts its stolen inventory into a persistent stash.</p>
+ */
 public class CollectorEntity extends PathfinderMob {
     private static final String TAG_STATE = "CollectorState";
     private static final String TAG_STOLEN_ITEMS = "StolenItems";
