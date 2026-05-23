@@ -3,151 +3,83 @@
 README par défaut : **français**.  
 Version anglaise : [README.en.md](README.en.md).
 
-## Aperçu
+## Présentation
 
-**The Collector** est un mod **NeoForge** pour **Minecraft 1.21.x** centré sur une créature rare qui observe, vole, fuit, puis laisse derrière elle des indices exploitables.
+**The Collector** est un mod Minecraft 1.21.1 (Forge) qui ajoute une créature rare et furtive :
+- elle repère les objets de valeur ;
+- elle vole des objets au sol ;
+- elle peut voler des coffres (et leur contenu) ;
+- elle fuit ;
+- elle transfère le butin dans son royaume.
 
-Le projet mélange quatre axes de jeu :
+## Fonctionnalités V1
 
-- chasse à une entité furtive ;
-- lecture du terrain et investigation ;
-- progression alchimique autour de la résonance ;
-- exploration de caches, ruines et accès dimensionnels.
-
-## Boucle de progression
-
-1. Le `Collector` apparaît ponctuellement dans l'Overworld.
-2. Il repère des objets de valeur au sol ou dans des coffres.
-3. Après un vol, il s'échappe et sème des `Collector Trace`.
-4. Le joueur apprend à capturer, distiller et stabiliser cette résonance.
-5. Cette progression débloque de nouveaux outils de traque.
-6. L'enquête mène vers des caches, des entrées rituelles et le royaume du Collector.
-
-## Contenu du mod
-
-### Entité et comportements
-
-- entité `The Collector` avec IA à états ;
-- vol d'objets au sol ;
-- pillage limité de coffres ;
-- inventaire interne plafonné ;
-- fuite, disparition et conversion du butin en cache persistante.
-
-### Monde et exploration
-
-- mini-caches générées en Overworld ;
-- traces déposées après les vols ;
-- fragments de reliques et éléments de lore ;
-- structures d'entrée menant au contenu avancé du mod ;
-- royaume du Collector avec dépôt de butin persistant.
-
-### Résonance et alchimie
-
-- capture d'une résonance instable depuis les traces ;
-- chaîne de transformation autour de l'alambic ;
-- cristallisation et raffinage ;
-- objets intermédiaires servant à la progression ;
-- outils de localisation liés au Collector.
-
-### Guidage du joueur
-
-- arbre d'advancements dédié ;
-- messages contextuels et tooltips de progression ;
-- interface d'alambic inspirée du `Brewing Stand` vanilla ;
-- intégration **JEI** optionnelle pour exposer les recettes et étapes spécifiques du mod.
-
-## Commandes
-
-Le mod enregistre deux racines équivalentes :
-
-- `/thecollector`
-- `/collector`
-
-Sous-commandes disponibles :
-
-- `/collector locate latest`
-- `/collector locate nearest`
-- `/collector locate all`
-- `/collector entry locate`
-- `/collector entry create`
+- Entité `The Collector` (modèle Enderman + texture custom)
+- Spawn rare en Overworld (configurable)
+- IA à états (`IDLE`, `SCOUTING`, `COLLECTING`, `ESCAPING`, `DESPAWNING`)
+- Vol d'objets au sol
+- Vol de coffres et butin associé
+- Fuite puis disparition
+- Cache dans une dimension dédiée : `the_collector:collector_realm`
+- Salle de coffres 6x6 (V1) dans le royaume
+- Entrées Overworld aléatoires vers le royaume
+- Système de traque :
+  - boussole (`collector_compass`)
+  - commandes de localisation
+- Accès dangereux au royaume :
+  - reliques rares à obtenir
+  - craft du `collector_catalyst`
+  - rituel d'activation de l'entrée
+  - vague hostile à l'activation
 
 ## Configuration
 
 Fichier généré :
-
 - `run/config/the_collector-common.toml`
 
-Principaux réglages :
-
-- `enabled`
+Exemples de réglages :
 - `spawnChancePerCheck`
 - `spawnCooldownTicks`
-- `spawnMinDistance`
-- `spawnMaxDistance`
-- `nightOnlySpawn`
 - `itemSearchRadius`
 - `chestTheftEnabled`
 - `chestSearchRadius`
 - `maxStealsPerChest`
-- `collectorInventorySlots`
 - `maxStolenStacks`
-- `escapeDistance`
-- `maxPresenceTicks`
 - `stashEnabled`
-- `bonusLootEnabled`
-- `miniCacheEnabled`
 
-## Architecture rapide
+## Commandes
 
-Quelques points d'entrée utiles pour reprendre le code :
+- Joueur :
+  - `/collector locate`
+  - `/collector locate latest`
+  - `/collector locate nearest`
+  - `/collector locate all`
+  - `/collector entry locate`
+- Admin (OP niveau 2) :
+  - `/collector entry create`
+  - `/collector spawn_static` (spawn debug, fixe, sans disparition)
 
-- `TheCollectorMod` : enregistrement du contenu et des handlers NeoForge ;
-- `CollectorEntity` : logique centrale de l'entité et cycle de vie ;
-- `CollectorStashManager` : création et persistance du butin volé ;
-- `CollectorEntryManager` : génération et maintenance des structures d'entrée ;
-- `CollectorCatalystItem` : activation rituelle d'une entrée ;
-- `TheCollectorConfig` : configuration commune du mod.
+Alias disponible : `/thecollector ...`
 
-## Développement
-
-Guide développeur détaillé :
-
-- [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
-- Version anglaise : [docs/DEVELOPER_GUIDE.en.md](docs/DEVELOPER_GUIDE.en.md)
-
-Lancer le client de dev :
+## Lancer en Développement
 
 ```powershell
 ./gradlew runClient
 ```
 
-Compiler le mod :
+## Compilation
 
 ```powershell
 ./gradlew build
 ```
 
-## Compatibilité
-
-- `Minecraft 1.21.1 -> 1.21.5`
-- `NeoForge 21.1.220 -> 21.5.x`
-
-### JEI
-
-`JEI` n'est pas requis pour utiliser le mod.
-
-S'il est installé, il affiche notamment :
-
-- la capture de la résonance ;
-- les recettes d'alambic ;
-- les étapes de cristallisation ;
-- le rituel d'activation des entrées.
-
 ## Auteur
 
 - Kérian
+- Kérian_Animals
+- kerian_animals
 
 ## Licence
 
-Projet distribué sous licence **MIT**.  
+Ce projet est sous licence **All Rights Reserved**.
 Voir [LICENSE](LICENSE).
