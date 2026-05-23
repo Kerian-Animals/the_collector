@@ -23,7 +23,7 @@ public class ResonanceItem extends Item {
     }
 
     public ResonanceItem(Properties properties, String loreKey, String hintKey, boolean emitsParticles) {
-        super(properties);
+        super(properties.stacksTo(16));
         this.loreKey = loreKey;
         this.hintKey = hintKey;
         this.emitsParticles = emitsParticles;
