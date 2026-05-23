@@ -69,7 +69,12 @@ public final class CollectorTraceInteractionHandler {
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 
         if (player != null && !player.getAbilities().instabuild) {
-            heldStack.shrink(1);
+            ItemStack stackInHand = player.getItemInHand(event.getHand());
+            if (stackInHand.is(Items.GLASS_BOTTLE)) {
+                stackInHand.shrink(1);
+            } else {
+                heldStack.shrink(1);
+            }
         }
 
         ItemStack unstableResonance = new ItemStack(ModItems.UNSTABLE_RESONANCE.get());
