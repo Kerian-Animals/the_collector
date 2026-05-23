@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:a_strange_trace",
+  "display": {
+    "icon": {
+      "id": "the_collector:nether_relic_fragment"
+    },
+    "title": {
+      "translate": "advancements.the_collector.relics_of_the_hunt.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.relics_of_the_hunt.description"
+    },
+    "x": 0.0,
+    "y": 2.0,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

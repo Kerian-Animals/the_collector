@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.entity;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.goal.CollectorCollectItemGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorEscapeGoal;
@@ -7,6 +8,7 @@ import fr.kerian_animals.thecollector.entity.goal.CollectorScoutGoal;
 import fr.kerian_animals.thecollector.entity.goal.CollectorStealChestGoal;
 import fr.kerian_animals.thecollector.entity.state.CollectorState;
 import fr.kerian_animals.thecollector.stash.CollectorStashManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -32,6 +34,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Core entity implementation for The Collector.
+ *
+ * <p>The entity alternates between scouting, stealing, escaping, and despawning. When it leaves
+ * the world it converts its stolen inventory into a persistent stash.</p>
+ */
 public class CollectorEntity extends PathfinderMob {
     private static final String TAG_STATE = "CollectorState";
     private static final String TAG_STOLEN_ITEMS = "StolenItems";
@@ -40,6 +48,7 @@ public class CollectorEntity extends PathfinderMob {
     private static final String TAG_AGE = "AgeTicks";
     private static final String TAG_DEBUG_FIXED = "DebugFixed";
     private static final String TAG_DEBUG_NO_DESPAWN = "DebugNoDespawn";
+    private static final String TAG_LAST_THEFT_POS = "LastTheftPos";
 
     private CollectorState state = CollectorState.IDLE;
     private @Nullable ItemEntity currentTarget;
@@ -50,6 +59,7 @@ public class CollectorEntity extends PathfinderMob {
     private int escapeTicks = 0;
     private boolean debugFixed = false;
     private boolean debugNoDespawn = false;
+    private @Nullable BlockPos lastTheftPos;
 
     public CollectorEntity(EntityType<? extends CollectorEntity> entityType, Level level) {
         super(entityType, level);
@@ -161,6 +171,7 @@ public class CollectorEntity extends PathfinderMob {
             return false;
         }
 
+        recordTheftAt(itemEntity.blockPosition());
         itemEntity.discard();
         return true;
     }
@@ -231,6 +242,17 @@ public class CollectorEntity extends PathfinderMob {
         this.debugNoDespawn = debugNoDespawn;
     }
 
+    public void recordTheftAt(BlockPos pos) {
+        this.lastTheftPos = pos.immutable();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            CollectorAdvancementHelper.awardNearby(serverLevel, pos, 24.0D, "something_is_missing");
+        }
+    }
+
+    public @Nullable BlockPos getLastTheftPos() {
+        return this.lastTheftPos;
+    }
+
     private int firstEmptySlot() {
         int maxSlots = Math.min(TheCollectorConfig.COLLECTOR_INVENTORY_SLOTS.get(), this.stolenInventory.getContainerSize());
         for (int i = 0; i < maxSlots; i++) {
@@ -259,6 +281,9 @@ public class CollectorEntity extends PathfinderMob {
         tag.putInt(TAG_AGE, this.ageTicks);
         tag.putBoolean(TAG_DEBUG_FIXED, this.debugFixed);
         tag.putBoolean(TAG_DEBUG_NO_DESPAWN, this.debugNoDespawn);
+        if (this.lastTheftPos != null) {
+            tag.putLong(TAG_LAST_THEFT_POS, this.lastTheftPos.asLong());
+        }
 
         ListTag listTag = new ListTag();
         int maxSlots = Math.min(TheCollectorConfig.COLLECTOR_INVENTORY_SLOTS.get(), this.stolenInventory.getContainerSize());
@@ -289,6 +314,7 @@ public class CollectorEntity extends PathfinderMob {
         this.ageTicks = tag.getInt(TAG_AGE);
         this.debugFixed = tag.getBoolean(TAG_DEBUG_FIXED);
         this.debugNoDespawn = tag.getBoolean(TAG_DEBUG_NO_DESPAWN);
+        this.lastTheftPos = tag.contains(TAG_LAST_THEFT_POS) ? BlockPos.of(tag.getLong(TAG_LAST_THEFT_POS)) : null;
         this.setNoAi(this.debugFixed);
 
         for (int i = 0; i < this.stolenInventory.getContainerSize(); i++) {

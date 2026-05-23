@@ -1,0 +1,59 @@
+name: Build and Release Minecraft Mod
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Read mod version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2 | tr -d '\r')
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version détectée: $VERSION"
+
+      - name: Build jar
+        run: ./gradlew build --no-daemon
+
+      - name: Check release notes file
+        shell: bash
+        run: |
+          test -f RELEASE_NOTES.md || (echo "RELEASE_NOTES.md introuvable" && exit 1)
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.version.outputs.value }}" \
+            build/libs/*.jar \
+            --title "v${{ steps.version.outputs.value }}" \
+            --notes-file RELEASE_NOTES.md \
+            --target "${{ github.sha }}"

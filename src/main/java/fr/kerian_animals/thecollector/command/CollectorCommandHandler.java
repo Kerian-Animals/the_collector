@@ -3,8 +3,6 @@ package fr.kerian_animals.thecollector.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import fr.kerian_animals.thecollector.TheCollectorMod;
-import fr.kerian_animals.thecollector.entity.CollectorEntity;
-import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.stash.CollectorStash;
@@ -19,15 +17,19 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+/**
+ * Registers administrative and discovery commands for Collector stashes and entry structures.
+ */
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class CollectorCommandHandler {
     private CollectorCommandHandler() {
     }
@@ -55,10 +57,6 @@ public final class CollectorCommandHandler {
                                 .requires(source -> source.hasPermission(2))
                                 .executes(CollectorCommandHandler::createEntry))
                );
-//                .then(Commands.literal("spawn_static")
-//                        .requires(source -> source.hasPermission(2))
-//                        .executes(CollectorCommandHandler::spawnStaticCollector)
-//                );
     }
 
     private static int locateLatest(CommandContext<CommandSourceStack> context) {
@@ -147,6 +145,7 @@ public final class CollectorCommandHandler {
         }
 
         CollectorEntry e = entry.get();
+        CollectorEntryManager.ensureEntryStructure(level, e);
         source.sendSuccess(() -> Component.translatable(
                 "command.the_collector.entry.locate",
                 e.pos().getX(), e.pos().getY(), e.pos().getZ(), "minecraft:overworld",
@@ -169,34 +168,6 @@ public final class CollectorCommandHandler {
         source.sendSuccess(() -> Component.translatable(
                 "command.the_collector.entry.created",
                 entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
-        ).withStyle(ChatFormatting.GREEN), true);
-        return 1;
-    }
-
-    private static int spawnStaticCollector(CommandContext<CommandSourceStack> context) {
-        CommandSourceStack source = context.getSource();
-        ServerPlayer player = source.getPlayer();
-        if (player == null) {
-            source.sendFailure(Component.translatable("command.the_collector.spawn.player_only"));
-            return 0;
-        }
-
-        ServerLevel level = player.serverLevel();
-        CollectorEntity collector = ModEntities.COLLECTOR.get().create(level);
-        if (collector == null) {
-            source.sendFailure(Component.translatable("command.the_collector.spawn.failed"));
-            return 0;
-        }
-
-        BlockPos spawnPos = player.blockPosition().offset(2, 0, 0);
-        collector.moveTo(spawnPos, player.getYRot(), 0.0F);
-        collector.setDebugFixed(true);
-        collector.setDebugNoDespawn(true);
-        level.addFreshEntity(collector);
-
-        source.sendSuccess(() -> Component.translatable(
-                "command.the_collector.spawn.static_success",
-                spawnPos.getX(), spawnPos.getY(), spawnPos.getZ()
         ).withStyle(ChatFormatting.GREEN), true);
         return 1;
     }

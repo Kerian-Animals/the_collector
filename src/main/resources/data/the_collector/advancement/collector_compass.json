@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:focus_the_signal",
+  "display": {
+    "icon": {
+      "id": "the_collector:collector_compass"
+    },
+    "title": {
+      "translate": "advancements.the_collector.collector_compass.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.collector_compass.description"
+    },
+    "x": 9.0,
+    "y": 0.5,
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

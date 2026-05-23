@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:dimensional_attunement",
+  "display": {
+    "icon": {
+      "id": "the_collector:resonance_crystal"
+    },
+    "title": {
+      "translate": "advancements.the_collector.focus_the_signal.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.focus_the_signal.description"
+    },
+    "x": 8.0,
+    "y": 0.5,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

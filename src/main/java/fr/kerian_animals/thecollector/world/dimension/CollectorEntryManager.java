@@ -11,6 +11,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Creates, rebuilds, and locates Overworld entry structures that lead into the Collector content.
+ */
 public final class CollectorEntryManager {
     private CollectorEntryManager() {
     }
@@ -19,6 +22,7 @@ public final class CollectorEntryManager {
         CollectorSavedData data = CollectorSavedData.get(overworld);
         Optional<CollectorEntry> existing = data.getLatestEntry();
         if (existing.isPresent()) {
+            ensureEntryStructure(overworld, existing.get());
             return existing.get();
         }
 
@@ -30,6 +34,13 @@ public final class CollectorEntryManager {
         return entry;
     }
 
+    public static void ensureEntryStructure(ServerLevel level, CollectorEntry entry) {
+        if (isEntryStructurePresent(level, entry.pos())) {
+            return;
+        }
+        buildEntryStructure(level, entry.pos());
+    }
+
     public static Optional<CollectorEntry> getNearestEntryFor(ServerLevel level, BlockPos from) {
         return CollectorSavedData.get(level).getNearestEntry(from);
     }
@@ -38,15 +49,28 @@ public final class CollectorEntryManager {
         for (int i = 0; i < 36; i++) {
             int x = around.getX() + level.random.nextInt(800) - 400;
             int z = around.getZ() + level.random.nextInt(800) - 400;
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos pos = new BlockPos(x, Math.max(level.getMinBuildHeight() + 1, y), z);
-            if (isGoodEntryPos(level, pos)) {
+            BlockPos pos = findOpenEntryPosInColumn(level, x, z);
+            if (pos != null) {
                 return pos;
             }
         }
 
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, around.getX(), around.getZ());
-        return new BlockPos(around.getX(), Math.max(level.getMinBuildHeight() + 1, y), around.getZ());
+        BlockPos fallback = findOpenEntryPosInColumn(level, around.getX(), around.getZ());
+        return fallback != null
+                ? fallback
+                : new BlockPos(around.getX(), Math.max(level.getMinBuildHeight() + 1, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, around.getX(), around.getZ())), around.getZ());
+    }
+
+    private static BlockPos findOpenEntryPosInColumn(ServerLevel level, int x, int z) {
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        int minY = Math.max(level.getMinBuildHeight() + 1, topY - 48);
+        for (int y = Math.max(level.getMinBuildHeight() + 1, topY); y >= minY; y--) {
+            BlockPos pos = new BlockPos(x, y, z);
+            if (isGoodEntryPos(level, pos)) {
+                return pos;
+            }
+        }
+        return null;
     }
 
     private static boolean isGoodEntryPos(ServerLevel level, BlockPos pos) {
@@ -56,10 +80,34 @@ public final class CollectorEntryManager {
         if (!level.getFluidState(pos).isEmpty()) {
             return false;
         }
-        return level.getBlockState(pos.below()).isSolidRender(level, pos.below());
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                BlockPos floor = pos.offset(dx, -1, dz);
+                BlockPos body = pos.offset(dx, 0, dz);
+                BlockPos above = pos.offset(dx, 1, dz);
+                if (!level.getBlockState(floor).isSolidRender(level, floor)) {
+                    return false;
+                }
+                if (!canReplace(level, body) || !canReplace(level, above)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isEntryStructurePresent(ServerLevel level, BlockPos center) {
+        if (!level.getBlockState(center).is(Blocks.LODESTONE)) {
+            return false;
+        }
+        return level.getBlockState(center.offset(2, 0, 0)).is(Blocks.COBBLED_DEEPSLATE_WALL)
+                && level.getBlockState(center.offset(-2, 0, 0)).is(Blocks.COBBLED_DEEPSLATE_WALL)
+                && level.getBlockState(center.offset(0, 0, 2)).is(Blocks.COBBLED_DEEPSLATE_WALL)
+                && level.getBlockState(center.offset(0, 0, -2)).is(Blocks.COBBLED_DEEPSLATE_WALL);
     }
 
     public static void buildEntryStructure(ServerLevel level, BlockPos center) {
+        clearVolume(level, center, 2, 1);
         Block[] palette = new Block[]{Blocks.COBBLED_DEEPSLATE, Blocks.DEEPSLATE_BRICKS, Blocks.TUFF_BRICKS};
         for (int dx = -2; dx <= 2; dx++) {
             for (int dz = -2; dz <= 2; dz++) {
@@ -77,10 +125,26 @@ public final class CollectorEntryManager {
         level.setBlock(center, Blocks.LODESTONE.defaultBlockState(), 3);
         level.setBlock(center.above(), Blocks.SOUL_FIRE.defaultBlockState(), 3);
 
-        // Unstable ruins: player must complete the ritual structure to activate the gate.
         level.setBlock(center.offset(2, 0, 0), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
         level.setBlock(center.offset(-2, 0, 0), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
         level.setBlock(center.offset(0, 0, 2), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
         level.setBlock(center.offset(0, 0, -2), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
+    }
+
+    private static boolean canReplace(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir();
+    }
+
+    private static void clearVolume(ServerLevel level, BlockPos center, int radius, int height) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                for (int dy = 0; dy <= height; dy++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
     }
 }

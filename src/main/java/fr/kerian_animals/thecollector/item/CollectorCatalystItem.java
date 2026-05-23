@@ -1,5 +1,6 @@
 package fr.kerian_animals.thecollector.item;
 
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import net.minecraft.ChatFormatting;
@@ -17,6 +18,9 @@ import net.minecraft.world.level.block.Blocks;
 
 import java.util.Optional;
 
+/**
+ * Activates a discovered Collector entry when the player completes the required ritual structure.
+ */
 public class CollectorCatalystItem extends Item {
     public CollectorCatalystItem(Properties properties) {
         super(properties);
@@ -59,6 +63,7 @@ public class CollectorCatalystItem extends Item {
         data.setEntryActivated(entry.id(), true);
         context.getItemInHand().shrink(1);
         triggerActivationDanger(level, clicked, player);
+        CollectorAdvancementHelper.award(player, "the_stone_listens");
 
         player.sendSystemMessage(Component.translatable("item.the_collector.collector_catalyst.activated")
                 .withStyle(ChatFormatting.GOLD));
@@ -66,13 +71,11 @@ public class CollectorCatalystItem extends Item {
     }
 
     private static boolean isRitualStructureValid(ServerLevel level, BlockPos center) {
-        // Inner cross: crying obsidian.
         if (!level.getBlockState(center.offset(1, 0, 0)).is(Blocks.CRYING_OBSIDIAN)) return false;
         if (!level.getBlockState(center.offset(-1, 0, 0)).is(Blocks.CRYING_OBSIDIAN)) return false;
         if (!level.getBlockState(center.offset(0, 0, 1)).is(Blocks.CRYING_OBSIDIAN)) return false;
         if (!level.getBlockState(center.offset(0, 0, -1)).is(Blocks.CRYING_OBSIDIAN)) return false;
 
-        // Outer cardinal lanterns.
         if (!level.getBlockState(center.offset(2, 1, 0)).is(Blocks.SOUL_LANTERN)) return false;
         if (!level.getBlockState(center.offset(-2, 1, 0)).is(Blocks.SOUL_LANTERN)) return false;
         if (!level.getBlockState(center.offset(0, 1, 2)).is(Blocks.SOUL_LANTERN)) return false;
@@ -83,7 +86,7 @@ public class CollectorCatalystItem extends Item {
 
     private static void triggerActivationDanger(ServerLevel level, BlockPos center, ServerPlayer activator) {
         level.playSound(null, center, SoundEvents.WARDEN_NEARBY_CLOSE, SoundSource.HOSTILE, 1.0F, 0.75F);
-        level.playSound(null, center, SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), SoundSource.BLOCKS, 1.0F, 0.65F);
+        level.playSound(null, center, SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.BLOCKS, 1.0F, 0.65F);
 
         for (int i = 0; i < 4; i++) {
             double angle = (Math.PI * 2.0D / 4.0D) * i;

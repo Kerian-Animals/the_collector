@@ -9,11 +9,12 @@ import net.minecraft.world.entity.monster.CaveSpider;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
-@Mod.EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class RelicDropHandler {
     private RelicDropHandler() {
     }
@@ -34,9 +35,14 @@ public final class RelicDropHandler {
             tryDrop(event, new ItemStack(ModItems.CAVERN_RELIC_FRAGMENT.get()), 0.025D);
         }
 
-        if (event.getEntity().getType() == EntityType.ENDERMAN && level.dimension() == Level.OVERWORLD && event.getEntity().getY() < 20) {
+        if (event.getEntity().getType() == EntityType.ENDERMAN && level.dimension() == Level.OVERWORLD && event.getEntity().getY() < 40) {
             tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 0.05D);
         }
+
+        if (event.getEntity().getType() == EntityType.WARDEN) {
+            tryDrop(event, new ItemStack(ModItems.ECHO_RELIC_FRAGMENT.get()), 1.0D);
+        }
+
     }
 
     private static void tryDrop(LivingDropsEvent event, ItemStack stack, double chance) {

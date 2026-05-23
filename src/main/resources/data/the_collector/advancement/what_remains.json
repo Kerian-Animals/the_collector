@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:patient_crystallization",
+  "display": {
+    "icon": {
+      "id": "the_collector:resonant_residue"
+    },
+    "title": {
+      "translate": "advancements.the_collector.what_remains.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.what_remains.description"
+    },
+    "x": 6.0,
+    "y": 0.5,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

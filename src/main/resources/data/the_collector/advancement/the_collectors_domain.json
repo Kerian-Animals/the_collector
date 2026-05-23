@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:the_door_between_worlds",
+  "display": {
+    "icon": {
+      "id": "minecraft:chest"
+    },
+    "title": {
+      "translate": "advancements.the_collector.the_collectors_domain.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.the_collectors_domain.description"
+    },
+    "x": 0.0,
+    "y": 6.0,
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -19,13 +19,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 public class CollectorStealChestGoal extends Goal {
+    private static final int CANDIDATE_CACHE_TICKS = 60;
+
     private final CollectorEntity collector;
+    private final List<BlockPos> candidateChests = new ArrayList<>();
     private @Nullable BlockPos targetChestPos;
+    private @Nullable BlockPos cachedOrigin;
     private int scanCooldown = 0;
     private int stealCooldown = 0;
+    private int candidateCacheTicks = 0;
 
     public CollectorStealChestGoal(CollectorEntity collector) {
         this.collector = collector;
@@ -103,17 +109,22 @@ public class CollectorStealChestGoal extends Goal {
     private @Nullable BlockPos findBestChest() {
         int radius = TheCollectorConfig.CHEST_SEARCH_RADIUS.get();
         BlockPos origin = collector.blockPosition();
+        refreshCandidateCacheIfNeeded(origin, radius);
 
         BlockPos bestPos = null;
         double bestScore = 0.0D;
 
-        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-radius, -2, -radius), origin.offset(radius, 2, radius))) {
+        Iterator<BlockPos> iterator = candidateChests.iterator();
+        while (iterator.hasNext()) {
+            BlockPos pos = iterator.next();
             BlockEntity blockEntity = collector.level().getBlockEntity(pos);
             if (!(blockEntity instanceof ChestBlockEntity chest)) {
+                iterator.remove();
                 continue;
             }
             int slot = findBestSlot(chest);
             if (slot < 0) {
+                iterator.remove();
                 continue;
             }
 
@@ -131,6 +142,43 @@ public class CollectorStealChestGoal extends Goal {
             }
         }
         return bestPos;
+    }
+
+    private void refreshCandidateCacheIfNeeded(BlockPos origin, int radius) {
+        if (candidateCacheTicks > 0 && cachedOrigin != null && cachedOrigin.distManhattan(origin) <= 4) {
+            candidateCacheTicks--;
+            return;
+        }
+
+        candidateChests.clear();
+        cachedOrigin = origin.immutable();
+        candidateCacheTicks = CANDIDATE_CACHE_TICKS;
+
+        for (int dy = -2; dy <= 2; dy++) {
+            sampleRing(origin, radius, dy);
+        }
+    }
+
+    private void sampleRing(BlockPos origin, int radius, int dy) {
+        addCandidateIfChest(origin.offset(0, dy, 0));
+        for (int ring = 1; ring <= radius; ring++) {
+            int step = Math.max(1, ring / 3);
+            for (int offset = -ring; offset <= ring; offset += step) {
+                addCandidateIfChest(origin.offset(offset, dy, -ring));
+                addCandidateIfChest(origin.offset(offset, dy, ring));
+                addCandidateIfChest(origin.offset(-ring, dy, offset));
+                addCandidateIfChest(origin.offset(ring, dy, offset));
+            }
+        }
+    }
+
+    private void addCandidateIfChest(BlockPos pos) {
+        if (candidateChests.contains(pos)) {
+            return;
+        }
+        if (collector.level().getBlockEntity(pos) instanceof ChestBlockEntity chest && hasInterestingLoot(chest)) {
+            candidateChests.add(pos.immutable());
+        }
     }
 
     private boolean isValidTargetChest(BlockPos pos) {
@@ -161,6 +209,7 @@ public class CollectorStealChestGoal extends Goal {
 
     private void stealWholeChest(ChestBlockEntity chest, BlockPos pos) {
         List<ItemStack> toSteal = collectStacksForTheft(chest, pos);
+        collector.recordTheftAt(pos);
 
         // The Collector steals the physical chest block too.
         toSteal.add(new ItemStack(Items.CHEST));

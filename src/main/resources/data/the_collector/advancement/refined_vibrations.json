@@ -1,0 +1,25 @@
+{
+  "parent": "the_collector:delicate_distillation",
+  "display": {
+    "icon": {
+      "id": "the_collector:distilled_resonance"
+    },
+    "title": {
+      "translate": "advancements.the_collector.refined_vibrations.title"
+    },
+    "description": {
+      "translate": "advancements.the_collector.refined_vibrations.description"
+    },
+    "x": 4.0,
+    "y": 0.5,
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

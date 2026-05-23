@@ -2,6 +2,9 @@ package fr.kerian_animals.thecollector.stash;
 
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
 import fr.kerian_animals.thecollector.entity.CollectorEntity;
+import fr.kerian_animals.thecollector.lore.CollectorLoreBookFactory;
+import fr.kerian_animals.thecollector.stash.CollectorEntry;
+import fr.kerian_animals.thecollector.world.CollectorResidueManager;
 import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
 import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
 import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
@@ -19,8 +22,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Builds and records persistent Collector stashes after a successful escape or despawn.
+ */
 public final class CollectorStashManager {
     private CollectorStashManager() {
     }
@@ -34,6 +41,7 @@ public final class CollectorStashManager {
         if (stolenItems.isEmpty()) {
             return;
         }
+        stolenItems.add(CollectorLoreBookFactory.createRandomFragment(level.random));
         if (TheCollectorConfig.BONUS_LOOT_ENABLED.get() && level.random.nextDouble() < 0.35D) {
             stolenItems.add(level.random.nextBoolean() ? new ItemStack(Items.EMERALD, 2) : new ItemStack(Items.GOLD_INGOT, 3));
         }
@@ -42,13 +50,12 @@ public final class CollectorStashManager {
         BlockPos stashPos;
         net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> stashDimension;
 
+        CollectorEntry ritualEntry = CollectorEntryManager.ensureEntryExists(level.getServer().overworld(), collector.blockPosition());
+
         if (realm != null) {
             CollectorVaultManager.ensureVaultBuilt(realm);
             stashPos = CollectorVaultManager.depositLoot(realm, stolenItems);
             stashDimension = ModDimensions.COLLECTOR_REALM;
-
-            // Ensure at least one random discoverable entry exists in the Overworld.
-            CollectorEntryManager.ensureEntryExists(level.getServer().overworld(), collector.blockPosition());
         } else {
             BlockPos fallback = findStashPos(level, collector.blockPosition());
             if (fallback == null) {
@@ -73,6 +80,9 @@ public final class CollectorStashManager {
         CollectorSavedData data = CollectorSavedData.get(level);
         data.addStash(stash);
 
+        Optional.ofNullable(collector.getLastTheftPos())
+                .ifPresent(theftPos -> CollectorResidueManager.spawnResidueTrail(level.getServer().overworld(), theftPos, ritualEntry.pos()));
+
         List<ServerPlayer> nearbyPlayers = level.players().stream()
                 .filter(player -> player.distanceToSqr(collector) <= 128 * 128)
                 .toList();
@@ -85,9 +95,19 @@ public final class CollectorStashManager {
         for (int i = 0; i < 32; i++) {
             int x = around.getX() + level.random.nextInt(64) - 32;
             int z = around.getZ() + level.random.nextInt(64) - 32;
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos candidate = new BlockPos(x, Math.max(level.getMinBuildHeight() + 1, y - 1), z);
+            BlockPos candidate = findOpenStashPosInColumn(level, x, z);
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
 
+    private static BlockPos findOpenStashPosInColumn(ServerLevel level, int x, int z) {
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        int minY = Math.max(level.getMinBuildHeight() + 1, topY - 48);
+        for (int y = Math.max(level.getMinBuildHeight() + 1, topY - 1); y >= minY; y--) {
+            BlockPos candidate = new BlockPos(x, y, z);
             if (isValidStashPos(level, candidate)) {
                 return candidate;
             }
@@ -99,11 +119,18 @@ public final class CollectorStashManager {
         if (!level.getWorldBorder().isWithinBounds(pos)) {
             return false;
         }
-        if (!level.getBlockState(pos).canBeReplaced()) {
-            return false;
-        }
-        if (!level.getBlockState(pos.below()).isSolidRender(level, pos.below())) {
-            return false;
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                BlockPos floor = pos.offset(dx, -1, dz);
+                BlockPos body = pos.offset(dx, 0, dz);
+                BlockPos above = pos.offset(dx, 1, dz);
+                if (!level.getBlockState(floor).isSolidRender(level, floor)) {
+                    return false;
+                }
+                if (!canReplace(level, body) || !canReplace(level, above)) {
+                    return false;
+                }
+            }
         }
         return level.getFluidState(pos).isEmpty();
     }
@@ -117,11 +144,13 @@ public final class CollectorStashManager {
             pos = center;
         }
 
-        // Force a valid surface and empty placement space so stash creation never silently fails.
-        level.setBlock(pos.below(), Blocks.STONE.defaultBlockState(), 3);
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-        if (!level.getFluidState(pos).isEmpty()) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        // Force a valid floor and open chamber so stash creation never spawns buried in stone.
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                level.setBlock(pos.offset(dx, -1, dz), Blocks.STONE.defaultBlockState(), 3);
+                level.setBlock(pos.offset(dx, 0, dz), Blocks.AIR.defaultBlockState(), 3);
+                level.setBlock(pos.offset(dx, 1, dz), Blocks.AIR.defaultBlockState(), 3);
+            }
         }
         return pos;
     }
@@ -146,6 +175,7 @@ public final class CollectorStashManager {
     }
 
     private static void buildStashStructure(ServerLevel level, BlockPos center) {
+        clearVolume(level, center, 3, 1);
         Block[] floorPalette = new Block[]{
                 Blocks.COBBLED_DEEPSLATE, Blocks.MOSSY_COBBLESTONE, Blocks.TUFF_BRICKS
         };
@@ -187,6 +217,23 @@ public final class CollectorStashManager {
     private static void placeBlockIfReplaceable(ServerLevel level, BlockPos pos, Block block) {
         if (level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir()) {
             level.setBlock(pos, block.defaultBlockState(), 3);
+        }
+    }
+
+    private static boolean canReplace(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).canBeReplaced() || level.getBlockState(pos).isAir();
+    }
+
+    private static void clearVolume(ServerLevel level, BlockPos center, int radius, int height) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                for (int dy = 0; dy <= height; dy++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
         }
     }
 }

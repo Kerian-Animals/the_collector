@@ -1,6 +1,7 @@
 package fr.kerian_animals.thecollector.world.dimension;
 
 import fr.kerian_animals.thecollector.TheCollectorMod;
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementHelper;
 import fr.kerian_animals.thecollector.stash.CollectorEntry;
 import fr.kerian_animals.thecollector.stash.CollectorSavedData;
 import fr.kerian_animals.thecollector.world.vault.CollectorVaultManager;
@@ -11,34 +12,58 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = TheCollectorMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+/**
+ * Handles crouch-based travel between the Overworld entry structure and the Collector realm.
+ *
+ * <p>The checks are intentionally throttled because they run on player tick. Travel state is
+ * stored in player persistent data so cooldowns survive handler re-instantiation and so return
+ * travel can remember the entry used by the player.</p>
+ */
+@EventBusSubscriber(modid = TheCollectorMod.MOD_ID)
 public final class CollectorDimensionTravelHandler {
     private static final String TAG_TRAVEL_COOLDOWN = "the_collector_travel_cooldown";
+    private static final String TAG_TRAVEL_CHECK_DELAY = "the_collector_travel_check_delay";
     private static final String TAG_LAST_ENTRY_POS = "the_collector_last_entry_pos";
+    private static final int TRAVEL_COOLDOWN_TICKS = 20;
+    private static final int CROUCH_CHECK_INTERVAL_TICKS = 8;
 
     private CollectorDimensionTravelHandler() {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        if (player.serverLevel().isClientSide || !player.isCrouching()) {
+        if (player.serverLevel().isClientSide) {
             return;
         }
 
         int cooldown = player.getPersistentData().getInt(TAG_TRAVEL_COOLDOWN);
         if (cooldown > 0) {
             player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, cooldown - 1);
+        }
+
+        int checkDelay = player.getPersistentData().getInt(TAG_TRAVEL_CHECK_DELAY);
+        if (checkDelay > 0) {
+            player.getPersistentData().putInt(TAG_TRAVEL_CHECK_DELAY, checkDelay - 1);
+        }
+
+        if (!player.isCrouching() || cooldown > 0) {
             return;
         }
+
+        if (player.getPersistentData().getInt(TAG_TRAVEL_CHECK_DELAY) > 0) {
+            return;
+        }
+        player.getPersistentData().putInt(TAG_TRAVEL_CHECK_DELAY, CROUCH_CHECK_INTERVAL_TICKS);
 
         if (player.serverLevel().dimension() == Level.OVERWORLD) {
             tryEnterCollectorRealm(player);
@@ -47,6 +72,9 @@ public final class CollectorDimensionTravelHandler {
         }
     }
 
+    /**
+     * Attempts to enter the Collector realm when the player crouches on an activated entry.
+     */
     private static void tryEnterCollectorRealm(ServerPlayer player) {
         ServerLevel overworld = player.serverLevel();
         Optional<CollectorEntry> nearest = CollectorSavedData.get(overworld).getNearestEntry(player.blockPosition());
@@ -70,7 +98,7 @@ public final class CollectorDimensionTravelHandler {
         CollectorVaultManager.ensureVaultBuilt(realm);
         prepareSafeStand(realm, CollectorVaultManager.VAULT_ENTRY_PAD);
         player.getPersistentData().putLong(TAG_LAST_ENTRY_POS, nearest.get().pos().asLong());
-        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, 20);
+        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, TRAVEL_COOLDOWN_TICKS);
         player.changeDimension(new DimensionTransition(
                 realm,
                 new Vec3(
@@ -84,9 +112,13 @@ public final class CollectorDimensionTravelHandler {
                 entity -> {
                 }
         ));
+        CollectorAdvancementHelper.award(player, "the_door_between_worlds");
         player.sendSystemMessage(Component.translatable("dimension.the_collector.entered"));
     }
 
+    /**
+     * Attempts to send the player back to the last known Overworld entry from the realm pad.
+     */
     private static void tryReturnToOverworld(ServerPlayer player) {
         if (player.blockPosition().distManhattan(CollectorVaultManager.VAULT_ENTRY_PAD) > 1) {
             return;
@@ -111,7 +143,7 @@ public final class CollectorDimensionTravelHandler {
         }
 
         prepareSafeStand(overworld, target.get().pos());
-        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, 20);
+        player.getPersistentData().putInt(TAG_TRAVEL_COOLDOWN, TRAVEL_COOLDOWN_TICKS);
         player.changeDimension(new DimensionTransition(
                 overworld,
                 new Vec3(target.get().pos().getX() + 0.5D, target.get().pos().getY() + 1.0D, target.get().pos().getZ() + 0.5D),
@@ -124,6 +156,9 @@ public final class CollectorDimensionTravelHandler {
         player.sendSystemMessage(Component.translatable("dimension.the_collector.left"));
     }
 
+    /**
+     * Guarantees a safe standable location before the dimension transition is executed.
+     */
     private static void prepareSafeStand(ServerLevel level, net.minecraft.core.BlockPos pos) {
         if (level.getBlockState(pos).canBeReplaced()) {
             level.setBlock(pos, Blocks.POLISHED_DEEPSLATE.defaultBlockState(), 3);

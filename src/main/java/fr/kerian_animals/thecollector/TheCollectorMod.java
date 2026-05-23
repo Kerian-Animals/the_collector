@@ -1,40 +1,48 @@
 package fr.kerian_animals.thecollector;
 
 import com.mojang.logging.LogUtils;
+import fr.kerian_animals.thecollector.advancement.CollectorAdvancementManager;
 import fr.kerian_animals.thecollector.config.TheCollectorConfig;
+import fr.kerian_animals.thecollector.item.CollectorTraceInteractionHandler;
+import fr.kerian_animals.thecollector.registry.ModBlockEntities;
+import fr.kerian_animals.thecollector.registry.ModCreativeTabs;
+import fr.kerian_animals.thecollector.registry.ModBlocks;
 import fr.kerian_animals.thecollector.registry.ModEntities;
 import fr.kerian_animals.thecollector.registry.ModItems;
+import fr.kerian_animals.thecollector.registry.ModMenus;
 import fr.kerian_animals.thecollector.spawn.CollectorSpawnHandler;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import fr.kerian_animals.thecollector.world.CollectorMiniCacheManager;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
+/**
+ * Main NeoForge entry point for The Collector.
+ *
+ * <p>This class registers the mod content, common configuration, and the runtime event handlers
+ * that drive spawning, progression, and trace interactions.</p>
+ */
 @Mod(TheCollectorMod.MOD_ID)
 public final class TheCollectorMod {
     public static final String MOD_ID = "the_collector";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public TheCollectorMod(FMLJavaModLoadingContext context) {
-        ModEntities.ENTITY_TYPES.register(context.getModEventBus());
-        ModItems.ITEMS.register(context.getModEventBus());
-        context.getModEventBus().addListener(this::onBuildTab);
+    public TheCollectorMod(IEventBus modEventBus, ModContainer modContainer) {
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        ModEntities.ENTITY_TYPES.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        ModMenus.MENUS.register(modEventBus);
+        ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
-        context.registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
-        MinecraftForge.EVENT_BUS.register(new CollectorSpawnHandler());
-    }
-
-    private void onBuildTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(ModItems.COLLECTOR_COMPASS.get());
-            event.accept(ModItems.COLLECTOR_CATALYST.get());
-        } else if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.NETHER_RELIC_FRAGMENT.get());
-            event.accept(ModItems.CAVERN_RELIC_FRAGMENT.get());
-            event.accept(ModItems.ECHO_RELIC_FRAGMENT.get());
-        }
+        modContainer.registerConfig(ModConfig.Type.COMMON, TheCollectorConfig.SPEC);
+        NeoForge.EVENT_BUS.register(new CollectorAdvancementManager());
+        NeoForge.EVENT_BUS.register(new CollectorSpawnHandler());
+        NeoForge.EVENT_BUS.register(new CollectorMiniCacheManager());
+        NeoForge.EVENT_BUS.register(new CollectorTraceInteractionHandler());
     }
 }
 

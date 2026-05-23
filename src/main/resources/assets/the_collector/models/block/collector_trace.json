@@ -1,0 +1,43 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "top": "the_collector:block/collector_trace_top",
+    "side": "the_collector:block/collector_trace_side",
+    "bottom": "the_collector:block/collector_trace_bottom",
+    "particle": "the_collector:block/collector_trace_top"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        1,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

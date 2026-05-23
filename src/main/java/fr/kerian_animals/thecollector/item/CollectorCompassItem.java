@@ -5,6 +5,8 @@ import fr.kerian_animals.thecollector.stash.CollectorStash;
 import fr.kerian_animals.thecollector.world.dimension.CollectorEntryManager;
 import fr.kerian_animals.thecollector.world.dimension.ModDimensions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.CompassItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -39,6 +42,7 @@ public class CollectorCompassItem extends CompassItem {
             Optional<fr.kerian_animals.thecollector.stash.CollectorEntry> nearestEntry =
                     CollectorEntryManager.getNearestEntryFor(serverPlayer.serverLevel(), serverPlayer.blockPosition());
             if (nearestEntry.isPresent()) {
+                setCompassTarget(stack, serverPlayer.serverLevel(), nearestEntry.get().pos());
                 serverPlayer.sendSystemMessage(Component.translatable(
                                 "item.the_collector.collector_compass.entry_hint",
                                 nearestEntry.get().pos().getX(),
@@ -47,6 +51,7 @@ public class CollectorCompassItem extends CompassItem {
                         .withStyle(ChatFormatting.DARK_AQUA));
                 spawnBreadcrumbTrail(serverPlayer, nearestEntry.get().pos());
             } else {
+                clearCompassTarget(stack);
                 serverPlayer.sendSystemMessage(Component.translatable("item.the_collector.collector_compass.no_stash")
                         .withStyle(ChatFormatting.GRAY));
             }
@@ -73,6 +78,7 @@ public class CollectorCompassItem extends CompassItem {
                 .withStyle(ChatFormatting.GOLD));
 
         if (sameDimension) {
+            setCompassTarget(stack, serverPlayer.serverLevel(), stash.pos());
             serverPlayer.sendSystemMessage(Component.translatable(
                     "item.the_collector.collector_compass.hint",
                     directionText,
@@ -80,20 +86,29 @@ public class CollectorCompassItem extends CompassItem {
             ).withStyle(ChatFormatting.AQUA));
             spawnBreadcrumbTrail(serverPlayer, stash.pos());
         } else {
+            clearCompassTarget(stack);
             serverPlayer.sendSystemMessage(Component.translatable(
                     "item.the_collector.collector_compass.cross_dimension"
             ).withStyle(ChatFormatting.DARK_AQUA));
             if (stash.dimension() == ModDimensions.COLLECTOR_REALM) {
                 CollectorEntryManager.getNearestEntryFor(serverPlayer.serverLevel(), serverPlayer.blockPosition())
-                        .ifPresent(entry -> serverPlayer.sendSystemMessage(Component.translatable(
-                                "item.the_collector.collector_compass.entry_hint",
-                                entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
-                        ).withStyle(ChatFormatting.AQUA)));
+                        .ifPresent(entry -> {
+                            setCompassTarget(stack, serverPlayer.serverLevel(), entry.pos());
+                            serverPlayer.sendSystemMessage(Component.translatable(
+                                    "item.the_collector.collector_compass.entry_hint",
+                                    entry.pos().getX(), entry.pos().getY(), entry.pos().getZ()
+                            ).withStyle(ChatFormatting.AQUA));
+                        });
             }
         }
 
         serverPlayer.getCooldowns().addCooldown(this, 20);
         return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public String getDescriptionId(ItemStack stack) {
+        return this.getDescriptionId();
     }
 
     private static String getCardinalDirection(BlockPos from, BlockPos to) {
@@ -153,6 +168,17 @@ public class CollectorCompassItem extends CompassItem {
         int dx = to.getX() - from.getX();
         int dz = to.getZ() - from.getZ();
         return (int) Math.sqrt((double) dx * dx + (double) dz * dz);
+    }
+
+    private static void setCompassTarget(ItemStack stack, Level level, BlockPos targetPos) {
+        stack.set(
+                DataComponents.LODESTONE_TRACKER,
+                new LodestoneTracker(Optional.of(GlobalPos.of(level.dimension(), targetPos)), false)
+        );
+    }
+
+    private static void clearCompassTarget(ItemStack stack) {
+        stack.remove(DataComponents.LODESTONE_TRACKER);
     }
 }
 

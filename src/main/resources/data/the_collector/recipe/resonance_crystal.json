@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RER",
+    "ERE",
+    "RER"
+  ],
+  "key": {
+    "R": {
+      "item": "the_collector:attuned_resonance"
+    },
+    "E": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "id": "the_collector:resonance_crystal",
+    "count": 1
+  }
+}
